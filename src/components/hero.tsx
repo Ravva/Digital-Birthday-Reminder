@@ -22,8 +22,8 @@ export default function Hero() {
             </h1>
 
             <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Automatic birthday reminders sent directly to your Telegram. Keep
-              track of important dates and never miss a chance to celebrate.
+              Автоматические напоминания о днях рождения отправляются прямо в ваш Telegram. 
+              Отслеживайте важные даты и никогда не упускайте возможность поздравить близких.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -31,7 +31,7 @@ export default function Hero() {
                 href="/dashboard"
                 className="inline-flex items-center px-8 py-4 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors text-lg font-medium"
               >
-                Get Started Free
+                Начать бесплатно
                 <ArrowUpRight className="ml-2 w-5 h-5" />
               </Link>
 
@@ -39,7 +39,7 @@ export default function Hero() {
                 href="#how-it-works"
                 className="inline-flex items-center px-8 py-4 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors text-lg font-medium"
               >
-                How It Works
+                Как это работает
               </Link>
             </div>
 
