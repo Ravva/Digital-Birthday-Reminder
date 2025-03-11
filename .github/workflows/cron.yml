@@ -22,12 +22,11 @@ jobs:
             exit 1
           fi
 
-      - name: Send birthday notifications
-        id: send_notifications
+      - name: Send notification request
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
         run: |
-          echo "Checking for birthdays today..."
-          
-          # Determine trigger type
           TRIGGER_TYPE="${{ github.event_name }}"
           
           # Form URL based on trigger type
@@ -39,25 +38,28 @@ jobs:
             API_URL='https://digital-birthday-reminder.vercel.app/api/send-notifications'
           fi
           
-          # Send request with authentication headers and verbose output
+          # Verify environment variables are set
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ] || [ -z "$NEXT_PUBLIC_SUPABASE_URL" ]; then
+            echo "Error: Required environment variables are not set"
+            exit 1
+          fi
+          
+          # Send request with authentication headers
           echo "Sending request to: $API_URL"
           RESPONSE=$(curl -L -X POST "$API_URL" \
           -H 'Content-Type: application/json' \
           -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
           -H "x-supabase-url: $NEXT_PUBLIC_SUPABASE_URL" \
-          -v \
           -w "\nHTTP_STATUS:%{http_code}" \
           -s)
           
           HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d":" -f2)
           API_RESPONSE=$(echo "$RESPONSE" | grep -v "HTTP_STATUS:")
           
-          echo "Full response headers and details:"
-          echo "$RESPONSE"
-          echo "Status code: $HTTP_STATUS"
+          echo "Response status code: $HTTP_STATUS"
           
-          # Only show error message, not the full response which might contain sensitive info
           if [ "$HTTP_STATUS" != "200" ]; then
             echo "API request failed with status $HTTP_STATUS"
+            echo "Error response: $API_RESPONSE"
             exit 1
           fi

@@ -82,17 +82,24 @@ export async function POST(req: Request) {
     const authHeader = req.headers.get('authorization');
     const supabaseUrl = req.headers.get('x-supabase-url');
 
+    // More detailed logging for debugging
+    console.log('Auth check:', {
+      receivedUrl: supabaseUrl,
+      expectedUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasAuthHeader: !!authHeader,
+      headerFormat: authHeader?.startsWith('Bearer ') ? 'correct' : 'incorrect'
+    });
+
     // Check if auth header exists and matches
-    if (!authHeader || !authHeader.startsWith('Bearer ') || 
+    if (!authHeader || 
+        !authHeader.startsWith('Bearer ') || 
         authHeader.split(' ')[1] !== process.env.SUPABASE_SERVICE_ROLE_KEY ||
         supabaseUrl !== process.env.NEXT_PUBLIC_SUPABASE_URL) {
-      console.log('Auth failed:', {
-        hasAuthHeader: !!authHeader,
-        startsWithBearer: authHeader?.startsWith('Bearer '),
-        urlMatch: supabaseUrl === process.env.NEXT_PUBLIC_SUPABASE_URL
-      });
       return NextResponse.json(
-        { error: "Invalid API key" },
+        { 
+          error: "Invalid API key",
+          details: "Authentication failed. Please check your credentials."
+        },
         { status: 401 }
       );
     }
