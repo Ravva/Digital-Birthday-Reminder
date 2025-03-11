@@ -45,17 +45,27 @@ jobs:
           -H 'Content-Type: application/json' \
           -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
           -H "x-supabase-url: $NEXT_PUBLIC_SUPABASE_URL" \
-          -v)
+          -w "\nHTTP_STATUS:%{http_code}" \
+          -s)
           
-          echo "API Response: $RESPONSE"
+          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d":" -f2)
+          API_RESPONSE=$(echo "$RESPONSE" | grep -v "HTTP_STATUS:")
           
-          if echo "$RESPONSE" | grep -q '"error":'; then
+          echo "Status code: $HTTP_STATUS"
+          echo "API Response: $API_RESPONSE"
+          
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "API request failed with status $HTTP_STATUS"
+            exit 1
+          fi
+          
+          if echo "$API_RESPONSE" | grep -q '"error":'; then
             echo "API returned an error"
             exit 1
           fi
           
-          if echo "$RESPONSE" | grep -q '"success":true'; then
-            if echo "$RESPONSE" | grep -q '"No birthdays today"'; then
+          if echo "$API_RESPONSE" | grep -q '"success":true'; then
+            if echo "$API_RESPONSE" | grep -q '"No birthdays today"'; then
               echo "No birthdays found for today"
             else
               echo "Birthday notifications sent successfully"

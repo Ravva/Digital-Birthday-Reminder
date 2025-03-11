@@ -83,6 +83,11 @@ export async function POST(req: Request) {
     if (!authHeader || !authHeader.startsWith('Bearer ') || 
         authHeader.split(' ')[1] !== process.env.SUPABASE_SERVICE_ROLE_KEY ||
         supabaseUrl !== process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      console.log('Auth failed:', {
+        hasAuthHeader: !!authHeader,
+        startsWithBearer: authHeader?.startsWith('Bearer '),
+        urlMatch: supabaseUrl === process.env.NEXT_PUBLIC_SUPABASE_URL
+      });
       return NextResponse.json(
         { error: "Invalid API key" },
         { status: 401 }
