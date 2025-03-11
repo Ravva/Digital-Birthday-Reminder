@@ -6,7 +6,7 @@ import { createClient } from "../../../supabase/client";
 import { useRouter } from "next/navigation";
 import { Upload, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import * as XLSX from "xlsx";
+import { Workbook } from 'exceljs';
 
 interface ContactImportProps {
   userId: string;
@@ -31,157 +31,106 @@ export default function ContactImport({ userId }: ContactImportProps) {
     }
   };
 
-  const parseExcel = async (file: File) => {
-    return new Promise<any[]>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const result = [];
+  const parseExcel = async (file: File): Promise<any[]> => {
+    return new Promise<any[]>(async (resolve, reject) => {
+      try {
+        const result: { name: string; birth_date: string }[] = [];
+        const workbook = new Workbook();
 
-          // Check if file is Excel or CSV
-          if (file.name.endsWith(".xlsx") || file.name.endsWith(".xls")) {
-            // Handle Excel file
-            const data = new Uint8Array(e.target?.result as ArrayBuffer);
-            const workbook = XLSX.read(data, { type: "array" });
+        if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+          // Handle Excel file
+          const buffer = await file.arrayBuffer();
+          await workbook.xlsx.load(buffer);
 
-            // Get first sheet
-            const firstSheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[firstSheetName];
-
-            // Convert to JSON
-            const rows = XLSX.utils.sheet_to_json(worksheet, {
-              header: 1,
-            }) as any[];
-
-            // Skip header row if exists
-            const startRow =
-              rows.length > 0 &&
-              rows[0].some(
-                (cell: any) =>
-                  typeof cell === "string" &&
-                  (cell.toLowerCase().includes("surname") ||
-                    cell.toLowerCase().includes("name") ||
-                    cell.toLowerCase().includes("birth")),
-              )
-                ? 1
-                : 0;
-
-            for (let i = startRow; i < rows.length; i++) {
-              const row = rows[i];
-              if (!row || row.length < 3) continue;
-
-              const surname = String(row[0]).trim();
-              const firstName = String(row[1]).trim();
-              const birthDateValue = row[2];
-
-              // Handle different date formats
-              let birthDate = null;
-
-              if (
-                typeof birthDateValue === "string" &&
-                birthDateValue.includes(".")
-              ) {
-                // Parse dd.mm.yyyy format
-                const [day, month, year] = birthDateValue
-                  .split(".")
-                  .map(Number);
-                if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                  birthDate = new Date(year, month - 1, day);
-                  // Исправление смещения даты из-за часового пояса
-                  birthDate.setHours(12);
-                }
-              } else if (birthDateValue instanceof Date) {
-                // Excel date object
-                birthDate = birthDateValue;
-                // Исправление смещения даты из-за часового пояса
-                birthDate.setHours(12);
-              } else if (typeof birthDateValue === "number") {
-                // Excel stores dates as numbers
-                birthDate = XLSX.SSF.parse_date_code(birthDateValue);
-                if (birthDate) {
-                  birthDate = new Date(
-                    birthDate.y,
-                    birthDate.m - 1,
-                    birthDate.d,
-                  );
-                  // Исправление смещения даты из-за часового пояса
-                  birthDate.setHours(12);
-                }
-              }
-
-              if (
-                surname &&
-                firstName &&
-                birthDate &&
-                !isNaN(birthDate.getTime())
-              ) {
-                result.push({
-                  name: `${firstName} ${surname}`,
-                  birth_date: birthDate.toISOString().split("T")[0],
-                });
-              }
-            }
-          } else {
-            // Handle CSV file
-            const data = e.target?.result;
-            const lines = (data as string).split("\n");
-
-            // Skip header row if exists
-            const startRow =
-              lines[0].toLowerCase().includes("surname") ||
-              lines[0].toLowerCase().includes("name") ||
-              lines[0].toLowerCase().includes("birth")
-                ? 1
-                : 0;
-
-            for (let i = startRow; i < lines.length; i++) {
-              const line = lines[i].trim();
-              if (!line) continue;
-
-              const columns = line.split(",");
-              if (columns.length < 3) continue;
-
-              const surname = columns[0].trim();
-              const firstName = columns[1].trim();
-              const birthDateStr = columns[2].trim();
-
-              // Parse date from dd.mm.yyyy format
-              let birthDate = null;
-              if (birthDateStr.includes(".")) {
-                const [day, month, year] = birthDateStr.split(".").map(Number);
-                if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                  birthDate = new Date(year, month - 1, day);
-                  // Исправление смещения даты из-за часового пояса
-                  birthDate.setHours(12);
-                }
-              }
-
-              if (
-                surname &&
-                firstName &&
-                birthDate &&
-                !isNaN(birthDate.getTime())
-              ) {
-                result.push({
-                  name: `${firstName} ${surname}`,
-                  birth_date: birthDate.toISOString().split("T")[0],
-                });
-              }
-            }
+          // Get first worksheet
+          const worksheet = workbook.worksheets[0];
+          
+          if (!worksheet) {
+            throw new Error('No worksheet found');
           }
 
-          resolve(result);
-        } catch (error) {
-          console.error("Error parsing file:", error);
-          reject(error);
-        }
-      };
-      reader.onerror = (error) => reject(error);
+          // Determine if first row is header
+          const firstRow = worksheet.getRow(1);
+          const hasHeader = firstRow.values && Array.isArray(firstRow.values) && 
+            firstRow.values.some(cell => 
+              cell && typeof cell === 'string' && 
+              (cell.toLowerCase().includes('surname') || 
+               cell.toLowerCase().includes('name') || 
+               cell.toLowerCase().includes('birth'))
+            );
 
-      if (file.name.endsWith(".xlsx") || file.name.endsWith(".xls")) {
-        reader.readAsArrayBuffer(file);
-      } else {
-        reader.readAsText(file);
+          const startRow = hasHeader ? 2 : 1;
+
+          worksheet.eachRow((row, rowNumber) => {
+            if (rowNumber < startRow) return;
+
+            const values = row.values as any[];
+            if (!values || values.length < 3) return;
+
+            const surname = String(values[1] || '').trim();
+            const firstName = String(values[2] || '').trim();
+            let birthDate: Date | null = null;
+
+            const birthDateValue = values[3];
+            if (birthDateValue instanceof Date) {
+              birthDate = birthDateValue;
+            } else if (typeof birthDateValue === 'string' && birthDateValue.includes('.')) {
+              const [day, month, year] = birthDateValue.split('.').map(Number);
+              if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                birthDate = new Date(year, month - 1, day, 12);
+              }
+            }
+
+            if (surname && firstName && birthDate && !isNaN(birthDate.getTime())) {
+              result.push({
+                name: `${firstName} ${surname}`,
+                birth_date: birthDate.toISOString().split('T')[0],
+              });
+            }
+          });
+        } else {
+          // Handle CSV file
+          const text = await file.text();
+          const lines = text.split('\n');
+
+          const hasHeader = lines[0].toLowerCase().includes('surname') ||
+                          lines[0].toLowerCase().includes('name') ||
+                          lines[0].toLowerCase().includes('birth');
+
+          const startRow = hasHeader ? 1 : 0;
+
+          for (let i = startRow; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+
+            const columns = line.split(',');
+            if (columns.length < 3) continue;
+
+            const surname = columns[0].trim();
+            const firstName = columns[1].trim();
+            const birthDateStr = columns[2].trim();
+
+            let birthDate: Date | null = null;
+            if (birthDateStr.includes('.')) {
+              const [day, month, year] = birthDateStr.split('.').map(Number);
+              if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                birthDate = new Date(year, month - 1, day, 12);
+              }
+            }
+
+            if (surname && firstName && birthDate && !isNaN(birthDate.getTime())) {
+              result.push({
+                name: `${firstName} ${surname}`,
+                birth_date: birthDate.toISOString().split('T')[0],
+              });
+            }
+          }
+        }
+
+        resolve(result);
+      } catch (error) {
+        console.error('Error parsing file:', error);
+        reject(error);
       }
     });
   };
@@ -241,8 +190,7 @@ export default function ContactImport({ userId }: ContactImportProps) {
       console.error("Error processing file:", error);
       setResult({
         success: false,
-        message:
-          "Error processing file. Please make sure it's a valid CSV file with the correct format.",
+        message: "Error processing file. Please make sure it's a valid Excel or CSV file with the correct format.",
       });
     } finally {
       setIsUploading(false);
@@ -283,14 +231,11 @@ export default function ContactImport({ userId }: ContactImportProps) {
           className="flex items-center gap-2"
         >
           {isUploading ? (
-            <>
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-              Импорт...
-            </>
+            "Importing..."
           ) : (
             <>
-              <Upload className="h-4 w-4" />
-              Импорт
+              <Upload className="w-4 h-4" />
+              Import
             </>
           )}
         </Button>
@@ -298,12 +243,16 @@ export default function ContactImport({ userId }: ContactImportProps) {
 
       {result && (
         <Alert variant={result.success ? "default" : "destructive"}>
-          {result.success ? (
-            <CheckCircle2 className="h-4 w-4" />
-          ) : (
-            <AlertCircle className="h-4 w-4" />
-          )}
-          <AlertTitle>{result.success ? "Успех" : "Ошибка"}</AlertTitle>
+          <div className="flex items-center gap-2">
+            {result.success ? (
+              <CheckCircle2 className="w-4 h-4" />
+            ) : (
+              <AlertCircle className="w-4 h-4" />
+            )}
+            <AlertTitle>
+              {result.success ? "Success" : "Error"}
+            </AlertTitle>
+          </div>
           <AlertDescription>{result.message}</AlertDescription>
         </Alert>
       )}

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["node", "exceljs"],
     "target": "es5",
     "lib": [
       "dom",
@@ -27,14 +28,16 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "next.config.js"
+    "next.config.js",
+    "src/types/**/*.d.ts"
   ],
   "exclude": [
     "node_modules"
