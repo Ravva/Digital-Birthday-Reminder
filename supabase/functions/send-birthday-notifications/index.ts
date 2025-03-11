@@ -1,8 +1,5 @@
-// Follow this setup guide to integrate the Deno runtime into your application:
-// https://deno.com/manual/examples/supabase-functions
-
+import { NextRequest } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { NextRequest, NextResponse } from "next/server";
 
 // Add Error interface
 interface ApiError {
@@ -108,29 +105,63 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Create Supabase client
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+    // Create Supabase client with explicit environment variable logging
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    console.log("Supabase URL available:", !!supabaseUrl);
+    console.log("Supabase Key available:", !!supabaseKey);
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error("Missing required environment variables");
+    }
+
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     console.log("Starting birthday notifications check");
 
-    // Get all active telegram settings
+    // Get all active telegram settings with more detailed logging
     const { data: telegramSettings, error: settingsError } = await supabase
       .from("telegram_settings")
       .select("*")
       .eq("is_active", true);
 
-    console.log("Active telegram settings:", telegramSettings);
+    console.log("Telegram settings count:", telegramSettings?.length || 0);
+    console.log("Settings error:", settingsError);
 
     if (settingsError) {
-      console.error("Error fetching telegram settings:", settingsError);
       throw settingsError;
     }
 
+    if (!telegramSettings?.length) {
+      console.log("No active telegram settings found");
+      return new Response(JSON.stringify({ 
+        message: "No active telegram settings found",
+        success: true 
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     for (const settings of telegramSettings) {
-      console.log(`Processing settings for user ${settings.user_id}`);
+      console.log(`Processing user ${settings.user_id} with bot token: ${settings.bot_token ? 'present' : 'missing'}`);
       
+      if (!settings.bot_token) {
+        console.log(`Skipping user ${settings.user_id} - no bot token`);
+        continue;
+      }
+
+      // Test the bot token with a simple API call
+      try {
+        const testResponse = await fetch(
+          `https://api.telegram.org/bot${settings.bot_token}/getMe`
+        );
+        const testData = await testResponse.json();
+        console.log(`Bot test response:`, testData);
+      } catch (error) {
+        console.error(`Bot token test failed for user ${settings.user_id}:`, error);
+      }
+
       // Get contacts for this user
       const { data: contacts, error: contactsError } = await supabase
         .from("contacts")
@@ -172,15 +203,27 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ 
+        message: "Birthday notifications sent!",
+        success: true 
+      }), 
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
   } catch (error: unknown) {
     console.error("Error in birthday notifications:", error);
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      headers: { "Content-Type": "application/json" },
-      status: 500,
-    });
+    return new Response(
+      JSON.stringify({ 
+        error: errorMessage,
+        success: false 
+      }), 
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500
+      }
+    );
   }
 }

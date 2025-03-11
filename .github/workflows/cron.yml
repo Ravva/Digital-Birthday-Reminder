@@ -6,15 +6,17 @@ on:
 jobs:
   cron:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     steps:
       - name: Call API endpoint
         id: api_call
         run: |
           echo "Starting API call..."
-          RESPONSE=$(curl -L -X POST 'https://abzpkoyyxxkduvovsmvx.supabase.co/functions/v1/birthday-notifications-cron' \
-          -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFienBrb3l5eHhrZHV2b3ZzbXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0NDQ1NTgsImV4cCI6MjA1NzAyMDU1OH0.__Ij4qZtF2nr_8pT1PMNDFEyUAKUT5ikhCFkxud_u2Q' \
-          -H 'Content-Type: application/json' \
-          --data '{"name":"Functions"}')
+          RESPONSE=$(curl -L -X POST 'https://digital-birthday-reminder.vercel.app/api/send-notifications' \
+          -H 'Content-Type: application/json')
           echo "API Response: $RESPONSE"
           
           # Check if the call was successful
