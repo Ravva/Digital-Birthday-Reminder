@@ -11,15 +11,33 @@ jobs:
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     steps:
+      - name: Check environment variables
+        run: |
+          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ]; then
+            echo "Error: NEXT_PUBLIC_SUPABASE_URL is not set"
+            exit 1
+          fi
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "Error: SUPABASE_SERVICE_ROLE_KEY is not set"
+            exit 1
+          fi
+
       - name: Call API endpoint
         id: api_call
         run: |
           echo "Starting API call..."
           RESPONSE=$(curl -L -X POST 'https://digital-birthday-reminder.vercel.app/api/send-notifications' \
-          -H 'Content-Type: application/json')
+          -H 'Content-Type: application/json' \
+          -v)  # Added verbose output
+          
           echo "API Response: $RESPONSE"
           
-          # Check if the call was successful
+          # Check if response contains error
+          if echo "$RESPONSE" | grep -q "error"; then
+            echo "API returned an error"
+            exit 1
+          fi
+          
           if [ $? -eq 0 ]; then
             echo "API call successful"
           else

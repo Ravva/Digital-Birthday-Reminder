@@ -84,17 +84,42 @@ function calculateDaysUntilBirthday(birthDateStr: string): number {
 
 export async function POST() {
   try {
+    // Проверка переменных окружения
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.error("Missing required environment variables");
+      return NextResponse.json(
+        { error: "Configuration error" },
+        { status: 500 }
+      );
+    }
+
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
     );
+
+    // Проверка подключения к Supabase
+    const { error: connectionError } = await supabase.from("telegram_settings").select("count");
+    if (connectionError) {
+      console.error("Supabase connection error:", connectionError);
+      return NextResponse.json(
+        { error: "Database connection error" },
+        { status: 500 }
+      );
+    }
 
     const { data: telegramSettings, error: settingsError } = await supabase
       .from("telegram_settings")
       .select("*")
       .eq("is_active", true);
 
-    if (settingsError) throw settingsError;
+    if (settingsError) {
+      console.error("Error fetching telegram settings:", settingsError);
+      return NextResponse.json(
+        { error: settingsError.message },
+        { status: 500 }
+      );
+    }
 
     if (!telegramSettings?.length) {
       return NextResponse.json({ 
@@ -140,9 +165,12 @@ export async function POST() {
       success: true 
     });
   } catch (error) {
-    console.error("Error in birthday notifications:", error);
+    console.error("Detailed error in birthday notifications:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'An unknown error occurred' },
+      { 
+        error: error instanceof Error ? error.message : 'An unknown error occurred',
+        details: error instanceof Error ? error.stack : undefined
+      },
       { status: 500 }
     );
   }
