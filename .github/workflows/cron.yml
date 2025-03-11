@@ -29,7 +29,7 @@ jobs:
           echo "Checking for birthdays today..."
           
           # Determine trigger type
-          TRIGGER_TYPE="workflow_dispatch"
+          TRIGGER_TYPE="${{ github.event_name }}"
           
           # Form URL based on trigger type
           if [ "$TRIGGER_TYPE" = "workflow_dispatch" ]; then
@@ -40,17 +40,21 @@ jobs:
             API_URL='https://digital-birthday-reminder.vercel.app/api/send-notifications'
           fi
           
-          # Send request with authentication headers
+          # Send request with authentication headers and verbose output
+          echo "Sending request to: $API_URL"
           RESPONSE=$(curl -L -X POST "$API_URL" \
           -H 'Content-Type: application/json' \
           -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
           -H "x-supabase-url: ${NEXT_PUBLIC_SUPABASE_URL}" \
+          -v \
           -w "\nHTTP_STATUS:%{http_code}" \
           -s)
           
           HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d":" -f2)
           API_RESPONSE=$(echo "$RESPONSE" | grep -v "HTTP_STATUS:")
           
+          echo "Full response headers and details:"
+          echo "$RESPONSE"
           echo "Status code: $HTTP_STATUS"
           echo "API Response: $API_RESPONSE"
           

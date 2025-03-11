@@ -1,6 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
+// Add this line to explicitly set the allowed methods
+export const dynamic = 'force-dynamic';
+
 interface ApiError {
   message: string;
 }
@@ -186,4 +189,16 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+}
+
+// Optionally, add an OPTIONS handler to properly handle CORS
+export async function OPTIONS(req: Request) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-supabase-url',
+    },
+  });
 }
