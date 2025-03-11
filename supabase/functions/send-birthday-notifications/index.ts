@@ -102,70 +102,50 @@ function calculateDaysUntilBirthday(birthDateStr: string): number {
 }
 
 serve(async (req: Request) => {
-  // Handle CORS preflight request
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
-
   try {
     // Create Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    console.log("Starting birthday notifications check");
+
     // Get all active telegram settings
     const { data: telegramSettings, error: settingsError } = await supabase
       .from("telegram_settings")
-      .select("user_id, chat_id, bot_token, message_template, days_before")
+      .select("*")
       .eq("is_active", true);
+
+    console.log("Active telegram settings:", telegramSettings);
 
     if (settingsError) {
       console.error("Error fetching telegram settings:", settingsError);
-      return new Response(
-        JSON.stringify({ error: "Error fetching telegram settings" }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 500,
-        },
-      );
+      throw settingsError;
     }
 
-    const results = [];
-
-    // Process each user's settings
     for (const settings of telegramSettings) {
-      // Get all contacts for this user
+      console.log(`Processing settings for user ${settings.user_id}`);
+      
+      // Get contacts for this user
       const { data: contacts, error: contactsError } = await supabase
         .from("contacts")
-        .select("id, name, birth_date, notes")
+        .select("*")
         .eq("user_id", settings.user_id);
 
+      console.log(`Found ${contacts?.length || 0} contacts for user ${settings.user_id}`);
+
       if (contactsError) {
-        console.error(
-          `Error fetching contacts for user ${settings.user_id}:`,
-          contactsError,
-        );
-        results.push({
-          userId: settings.user_id,
-          error: "Error fetching contacts",
-        });
+        console.error("Error fetching contacts:", contactsError);
         continue;
       }
 
-      // Check for birthdays
-      const birthdayNotifications = [];
-
+      // Process each contact
       for (const contact of contacts) {
-        const daysUntilBirthday = calculateDaysUntilBirthday(
-          contact.birth_date,
-        );
+        const daysUntilBirthday = calculateDaysUntilBirthday(contact.birth_date);
+        console.log(`Contact ${contact.name}: ${daysUntilBirthday} days until birthday`);
 
-        // Check if birthday is today or matches the days_before setting
-        if (
-          daysUntilBirthday === 0 ||
-          daysUntilBirthday === settings.days_before
-        ) {
-          // Format message
+        if (daysUntilBirthday === 0 || daysUntilBirthday === settings.days_before) {
+          console.log(`Sending notification for ${contact.name}`);
           const message = formatBirthdayMessage(
             settings.message_template,
             contact,
@@ -179,39 +159,21 @@ serve(async (req: Request) => {
               settings.chat_id,
               message,
             );
-            birthdayNotifications.push({
-              contactId: contact.id,
-              name: contact.name,
-              daysUntilBirthday,
-              messageSent: sendResult.success,
-              error: sendResult.success ? null : sendResult.error,
-            });
+            console.log(`Notification sent for ${contact.name}:`, sendResult);
           } else {
-            birthdayNotifications.push({
-              contactId: contact.id,
-              name: contact.name,
-              daysUntilBirthday,
-              messageSent: false,
-              error: "No bot token configured",
-            });
+            console.log(`No bot token configured for user ${settings.user_id}`);
           }
         }
       }
-
-      results.push({
-        userId: settings.user_id,
-        notificationsSent: birthdayNotifications.length,
-        notifications: birthdayNotifications,
-      });
     }
 
-    return new Response(JSON.stringify({ success: true, results }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    return new Response(JSON.stringify({ success: true }), {
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Unexpected error:", error);
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    console.error("Error in birthday notifications:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { "Content-Type": "application/json" },
       status: 500,
     });
   }

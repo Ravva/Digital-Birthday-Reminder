@@ -1,6 +1,6 @@
 "use client";
 
-// import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { ru } from "date-fns/locale/ru";
+import { ru } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import {
   Popover,
@@ -32,10 +32,10 @@ import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+    message: "Имя должно содержать минимум 2 символа.",
   }),
   birth_date: z.date({
-    required_error: "Please select a birth date.",
+    required_error: "Пожалуйста, выберите дату рождения.",
   }),
   notes: z.string().optional(),
 });
@@ -52,7 +52,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
 
   // Initialize form with existing contact data if editing
   const form = useForm<z.infer<typeof formSchema>>({
-    // resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: contact?.name || "",
       birth_date: contact?.birth_date
@@ -65,8 +65,11 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
+      if (!values.birth_date) {
+        throw new Error("Дата рождения обязательна");
+      }
+
       if (contact) {
-        // Update existing contact
         const { error } = await supabase
           .from("contacts")
           .update({
@@ -79,7 +82,6 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
 
         if (error) throw error;
       } else {
-        // Create new contact
         const { error } = await supabase.from("contacts").insert({
           user_id: userId,
           name: values.name,
@@ -133,13 +135,11 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                         variant={"outline"}
                         className={cn(
                           "w-full pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground",
+                          !field.value && "text-muted-foreground"
                         )}
                       >
                         {field.value ? (
-                          format(field.value, "PPP", {
-                            locale: require("date-fns/locale/ru"),
-                          })
+                          format(field.value, "PPP", { locale: ru })
                         ) : (
                           <span>Выберите дату</span>
                         )}
