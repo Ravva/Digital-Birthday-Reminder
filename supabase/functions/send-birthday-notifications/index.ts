@@ -2,110 +2,115 @@
 // https://deno.com/manual/examples/supabase-functions
 
 import { createClient } from "@supabase/supabase-js";
-import { serve } from "https://deno.land/std@0.217.0/http/server.ts";
+import { NextRequest, NextResponse } from "next/server";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
-
-interface Contact {
-  id: string;
-  name: string;
-  birth_date: string;
-  notes: string | null;
+// Add Error interface
+interface ApiError {
+  message: string;
 }
 
-interface TelegramSettings {
-  chat_id: string;
-  bot_token: string | null;
-  message_template: string;
-  days_before: number;
-}
+export async function POST(req: NextRequest) {
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type",
+  };
 
-async function sendTelegramMessage(
-  botToken: string,
-  chatId: string,
-  message: string,
-) {
-  try {
-    const response = await fetch(
-      `https://api.telegram.org/bot${botToken}/sendMessage`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+  interface Contact {
+    id: string;
+    name: string;
+    birth_date: string;
+    notes: string | null;
+  }
+
+  interface TelegramSettings {
+    chat_id: string;
+    bot_token: string | null;
+    message_template: string;
+    days_before: number;
+  }
+
+  async function sendTelegramMessage(
+    botToken: string,
+    chatId: string,
+    message: string,
+  ) {
+    try {
+      const response = await fetch(
+        `https://api.telegram.org/bot${botToken}/sendMessage`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+            parse_mode: "HTML",
+          }),
         },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message,
-          parse_mode: "HTML",
-        }),
-      },
-    );
+      );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Telegram API error:", errorData);
-      return { success: false, error: errorData };
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Telegram API error:", errorData);
+        return { success: false, error: errorData };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error("Error sending Telegram message:", error);
+      return { success: false, error };
+    }
+  }
+
+  function formatBirthdayMessage(
+    template: string,
+    contact: Contact,
+    daysUntilBirthday: number,
+  ) {
+    let message = template;
+
+    // Replace placeholders
+    message = message.replace(/{{name}}/g, contact.name);
+    message = message.replace(/{{days}}/g, daysUntilBirthday.toString());
+
+    if (contact.notes) {
+      message = message.replace(/{{notes}}/g, contact.notes);
+    } else {
+      message = message.replace(/{{notes}}/g, "");
     }
 
-    return { success: true };
-  } catch (error) {
-    console.error("Error sending Telegram message:", error);
-    return { success: false, error };
-  }
-}
-
-function formatBirthdayMessage(
-  template: string,
-  contact: Contact,
-  daysUntilBirthday: number,
-) {
-  let message = template;
-
-  // Replace placeholders
-  message = message.replace(/{{name}}/g, contact.name);
-  message = message.replace(/{{days}}/g, daysUntilBirthday.toString());
-
-  if (contact.notes) {
-    message = message.replace(/{{notes}}/g, contact.notes);
-  } else {
-    message = message.replace(/{{notes}}/g, "");
+    return message;
   }
 
-  return message;
-}
+  function calculateDaysUntilBirthday(birthDateStr: string): number {
+    const today = new Date();
+    const birthDate = new Date(birthDateStr);
 
-function calculateDaysUntilBirthday(birthDateStr: string): number {
-  const today = new Date();
-  const birthDate = new Date(birthDateStr);
+    // Set birth date to current year
+    const birthDateThisYear = new Date(
+      today.getFullYear(),
+      birthDate.getMonth(),
+      birthDate.getDate(),
+    );
 
-  // Set birth date to current year
-  const birthDateThisYear = new Date(
-    today.getFullYear(),
-    birthDate.getMonth(),
-    birthDate.getDate(),
-  );
+    // If birthday has already occurred this year, set to next year
+    if (birthDateThisYear < today) {
+      birthDateThisYear.setFullYear(today.getFullYear() + 1);
+    }
 
-  // If birthday has already occurred this year, set to next year
-  if (birthDateThisYear < today) {
-    birthDateThisYear.setFullYear(today.getFullYear() + 1);
+    // Calculate difference in days
+    const diffTime = birthDateThisYear.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return diffDays;
   }
 
-  // Calculate difference in days
-  const diffTime = birthDateThisYear.getTime() - today.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  return diffDays;
-}
-
-serve(async (req: Request) => {
   try {
     // Create Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     console.log("Starting birthday notifications check");
@@ -170,11 +175,12 @@ serve(async (req: Request) => {
     return new Response(JSON.stringify({ success: true }), {
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error in birthday notifications:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { "Content-Type": "application/json" },
       status: 500,
     });
   }
-});
+}

@@ -7,7 +7,6 @@ import {
   Inbox,
   User,
   Users,
-  Plus,
   LogOut,
   Settings,
   Calendar,
@@ -74,20 +73,6 @@ export default function SidebarClient() {
             >
               <User className="h-4 w-4 mr-3" />
               <span>Контакты</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/dashboard/contacts/new"
-              className={cn(
-                "flex items-center px-2 py-1.5 text-sm rounded-md",
-                pathname === "/dashboard/contacts/new"
-                  ? "bg-[#525567] text-white"
-                  : "text-gray-300 hover:bg-[#2c2d30]",
-              )}
-            >
-              <Plus className="h-4 w-4 mr-3" />
-              <span>Добавить контакт</span>
             </Link>
           </li>
           <li>
