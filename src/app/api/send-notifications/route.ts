@@ -65,26 +65,20 @@ function formatBirthdayMessage(
   return message;
 }
 
-function calculateDaysUntilBirthday(birthDateStr: string): number {
+function isBirthdayToday(birthDateStr: string): boolean {
   const today = new Date();
   const birthDate = new Date(birthDateStr);
-  const birthDateThisYear = new Date(
-    today.getFullYear(),
-    birthDate.getMonth(),
-    birthDate.getDate(),
-  );
-
-  if (birthDateThisYear < today) {
-    birthDateThisYear.setFullYear(today.getFullYear() + 1);
-  }
-
-  const diffTime = birthDateThisYear.getTime() - today.getTime();
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  return today.getMonth() === birthDate.getMonth() && 
+         today.getDate() === birthDate.getDate();
 }
 
-export async function POST() {
+export async function POST(req: Request) {
   try {
-    // Проверка переменных окружения
+    // Получаем параметр force из URL
+    const url = new URL(req.url);
+    const forceCheck = url.searchParams.get('force') === 'true';
+
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
       console.error("Missing required environment variables");
       return NextResponse.json(
@@ -97,16 +91,6 @@ export async function POST() {
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
-
-    // Проверка подключения к Supabase
-    const { error: connectionError } = await supabase.from("telegram_settings").select("count");
-    if (connectionError) {
-      console.error("Supabase connection error:", connectionError);
-      return NextResponse.json(
-        { error: "Database connection error" },
-        { status: 500 }
-      );
-    }
 
     const { data: telegramSettings, error: settingsError } = await supabase
       .from("telegram_settings")
@@ -128,6 +112,9 @@ export async function POST() {
       });
     }
 
+    let notificationsSent = false;
+    let birthdaysFound = false;
+
     for (const settings of telegramSettings) {
       if (!settings.bot_token) continue;
 
@@ -142,27 +129,41 @@ export async function POST() {
       }
 
       for (const contact of contacts) {
-        const daysUntilBirthday = calculateDaysUntilBirthday(contact.birth_date);
+        if (isBirthdayToday(contact.birth_date)) {
+          birthdaysFound = true;
+          
+          // Если это ручной запуск (force=true) или наступило время отправки
+          if (forceCheck) {
+            const message = formatBirthdayMessage(
+              settings.message_template,
+              contact,
+              0
+            );
 
-        if (daysUntilBirthday === 0 || daysUntilBirthday === settings.days_before) {
-          const message = formatBirthdayMessage(
-            settings.message_template,
-            contact,
-            daysUntilBirthday,
-          );
+            const result = await sendTelegramMessage(
+              settings.bot_token,
+              settings.chat_id,
+              message
+            );
 
-          await sendTelegramMessage(
-            settings.bot_token,
-            settings.chat_id,
-            message,
-          );
+            if (result.success) {
+              notificationsSent = true;
+              console.log(`Birthday notification sent for ${contact.name}`);
+            } else {
+              console.error(`Failed to send notification for ${contact.name}:`, result.error);
+            }
+          }
         }
       }
     }
 
     return NextResponse.json({ 
-      message: "Birthday notifications sent!",
-      success: true 
+      message: birthdaysFound 
+        ? (notificationsSent ? "Birthday notifications sent!" : "Birthdays found but notifications were not sent") 
+        : "No birthdays today",
+      success: true,
+      birthdaysFound,
+      notificationsSent
     });
   } catch (error) {
     console.error("Detailed error in birthday notifications:", error);
