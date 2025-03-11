@@ -43,8 +43,8 @@ jobs:
           # Send request with authentication headers
           RESPONSE=$(curl -L -X POST "$API_URL" \
           -H 'Content-Type: application/json' \
-          -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
-          -H "x-supabase-url: $NEXT_PUBLIC_SUPABASE_URL" \
+          -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+          -H "x-supabase-url: ${NEXT_PUBLIC_SUPABASE_URL}" \
           -w "\nHTTP_STATUS:%{http_code}" \
           -s)
           
