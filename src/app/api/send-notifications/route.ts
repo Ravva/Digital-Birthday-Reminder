@@ -75,17 +75,23 @@ function isBirthdayToday(birthDateStr: string): boolean {
 
 export async function POST(req: Request) {
   try {
-    // Получаем параметр force из URL
-    const url = new URL(req.url);
-    const forceCheck = url.searchParams.get('force') === 'true';
+    // Get authorization header
+    const authHeader = req.headers.get('authorization');
+    const supabaseUrl = req.headers.get('x-supabase-url');
 
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      console.error("Missing required environment variables");
+    // Check if auth header exists and matches
+    if (!authHeader || !authHeader.startsWith('Bearer ') || 
+        authHeader.split(' ')[1] !== process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        supabaseUrl !== process.env.NEXT_PUBLIC_SUPABASE_URL) {
       return NextResponse.json(
-        { error: "Configuration error" },
-        { status: 500 }
+        { error: "Invalid API key" },
+        { status: 401 }
       );
     }
+
+    // Get force parameter from URL
+    const url = new URL(req.url);
+    const forceCheck = url.searchParams.get('force') === 'true';
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
