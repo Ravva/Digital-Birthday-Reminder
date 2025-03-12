@@ -36,7 +36,7 @@ const formSchema = z.object({
   }),
   birth_date: z.date({
     required_error: "Пожалуйста, выберите дату рождения.",
-  }),
+  }).nullable(),
   notes: z.string().optional(),
 });
 
@@ -49,6 +49,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
   const router = useRouter();
   const supabase = createClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   // Initialize form with existing contact data if editing
   const form = useForm<z.infer<typeof formSchema>>({
@@ -101,6 +102,11 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
     }
   }
 
+  const onDateSelect = (date: Date | undefined) => {
+    form.setValue("birth_date", date || null);
+    setIsCalendarOpen(false); // закрываем календарь после выбора даты
+  };
+
   return (
     <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg border">
       <Form {...form}>
@@ -128,13 +134,13 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>Дата рождения</FormLabel>
-                <Popover>
+                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-full pl-3 text-left font-normal",
+                          "w-[240px] pl-3 text-left font-normal",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -150,9 +156,9 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
+                      selected={field.value || undefined}
+                      onSelect={onDateSelect}
+                      disabled={(date: Date) =>
                         date > new Date() || date < new Date("1900-01-01")
                       }
                       initialFocus
@@ -160,9 +166,6 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                     />
                   </PopoverContent>
                 </Popover>
-                <FormDescription>
-                  Выберите дату рождения вашего контакта.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
