@@ -23,7 +23,7 @@ export default async function EditContactPage({
     return redirect("/sign-in");
   }
 
-  // Fetch the contact
+  // Fetch the contact with explicit type checking
   const { data: contact, error } = await supabase
     .from("contacts")
     .select("*")
@@ -32,13 +32,14 @@ export default async function EditContactPage({
     .single();
 
   if (error || !contact) {
+    console.error("Error fetching contact:", error);
     return redirect("/dashboard/contacts");
   }
 
   return (
     <main className="p-6">
       <h1 className="text-3xl font-bold mb-6">Редактировать контакт</h1>
-      <ContactForm userId={user.id} contact={contact as Tables<"contacts">} />
+      <ContactForm userId={user.id} contact={contact} />
     </main>
   );
 }

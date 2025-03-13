@@ -36,7 +36,7 @@ const formSchema = z.object({
   }),
   birth_date: z.date({
     required_error: "Пожалуйста, выберите дату рождения.",
-  }).nullable(),
+  }),
   notes: z.string().optional(),
 });
 
@@ -56,9 +56,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: contact?.name || "",
-      birth_date: contact?.birth_date
-        ? new Date(contact.birth_date)
-        : undefined,
+      birth_date: contact?.birth_date ? new Date(contact.birth_date) : null,
       notes: contact?.notes || "",
     },
   });
@@ -70,29 +68,42 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
         throw new Error("Дата рождения обязательна");
       }
 
+      // Преобразуем дату в формат YYYY-MM-DD
+      const formattedDate = new Date(values.birth_date).toISOString().split('T')[0];
+
       if (contact) {
+        // Обновление существующего контакта
         const { error } = await supabase
           .from("contacts")
           .update({
             name: values.name,
-            birth_date: values.birth_date.toISOString().split("T")[0],
+            birth_date: formattedDate,
             notes: values.notes,
             updated_at: new Date().toISOString(),
           })
-          .eq("id", contact.id);
+          .eq("id", contact.id)
+          .eq("user_id", userId);
 
-        if (error) throw error;
+        if (error) {
+          console.error("Error updating contact:", error);
+          throw error;
+        }
       } else {
+        // Создание нового контакта
         const { error } = await supabase.from("contacts").insert({
           user_id: userId,
           name: values.name,
-          birth_date: values.birth_date.toISOString().split("T")[0],
+          birth_date: formattedDate,
           notes: values.notes,
         });
 
-        if (error) throw error;
+        if (error) {
+          console.error("Error creating contact:", error);
+          throw error;
+        }
       }
 
+      // После успешного сохранения
       router.push("/dashboard/contacts");
       router.refresh();
     } catch (error) {
@@ -103,8 +114,18 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
   }
 
   const onDateSelect = (date: Date | undefined) => {
-    form.setValue("birth_date", date || null);
-    setIsCalendarOpen(false); // закрываем календарь после выбора даты
+    if (date) {
+      // Устанавливаем дату в UTC для избежания проблем с часовыми поясами
+      const utcDate = new Date(Date.UTC(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      ));
+      form.setValue("birth_date", utcDate);
+    } else {
+      form.setValue("birth_date", null);
+    }
+    setIsCalendarOpen(false);
   };
 
   return (
