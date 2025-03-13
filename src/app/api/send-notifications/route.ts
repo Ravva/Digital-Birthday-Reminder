@@ -107,6 +107,12 @@ export async function POST(req: Request) {
     // Get force parameter from URL
     const url = new URL(req.url);
     const forceCheck = url.searchParams.get('force') === 'true';
+    
+    console.log('Debug info:', {
+      forceCheck,
+      requestUrl: req.url,
+      searchParams: Object.fromEntries(url.searchParams.entries())
+    });
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -150,11 +156,18 @@ export async function POST(req: Request) {
       }
 
       for (const contact of contacts) {
+        console.log('Processing contact:', {
+          name: contact.name,
+          birthDate: contact.birth_date,
+          isBirthdayToday: isBirthdayToday(contact.birth_date)
+        });
+
         if (isBirthdayToday(contact.birth_date)) {
+          console.log('Birthday found for:', contact.name);
           birthdaysFound = true;
           
-          // Если это ручной запуск (force=true) или наступило время отправки
           if (forceCheck) {
+            console.log('Force check is true, sending notification');
             const message = formatBirthdayMessage(
               settings.message_template,
               contact,
@@ -173,6 +186,8 @@ export async function POST(req: Request) {
             } else {
               console.error(`Failed to send notification for ${contact.name}:`, result.error);
             }
+          } else {
+            console.log('Force check is false, skipping notification');
           }
         }
       }
