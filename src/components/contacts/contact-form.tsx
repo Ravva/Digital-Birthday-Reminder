@@ -56,7 +56,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: contact?.name || "",
-      birth_date: contact?.birth_date ? new Date(contact.birth_date) : null,
+      birth_date: contact?.birth_date ? new Date(contact.birth_date) : undefined,
       notes: contact?.notes || "",
     },
   });
@@ -122,8 +122,6 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
         date.getDate()
       ));
       form.setValue("birth_date", utcDate);
-    } else {
-      form.setValue("birth_date", null);
     }
     setIsCalendarOpen(false);
   };
@@ -177,8 +175,8 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
-                      selected={field.value || undefined}
-                      onSelect={onDateSelect}
+                      selected={field.value instanceof Date ? field.value : undefined}
+                      onSelect={(date) => onDateSelect(date)}
                       disabled={(date: Date) =>
                         date > new Date() || date < new Date("1900-01-01")
                       }
