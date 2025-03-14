@@ -166,28 +166,23 @@ export async function POST(req: Request) {
           console.log('Birthday found for:', contact.name);
           birthdaysFound = true;
           
-          if (forceCheck) {
-            console.log('Force check is true, sending notification');
-            const message = formatBirthdayMessage(
-              settings.message_template,
-              contact,
-              0
-            );
+          const message = formatBirthdayMessage(
+            settings.message_template,
+            contact,
+            0
+          );
 
-            const result = await sendTelegramMessage(
-              settings.bot_token,
-              settings.chat_id,
-              message
-            );
+          const result = await sendTelegramMessage(
+            settings.bot_token,
+            settings.chat_id,
+            message
+          );
 
-            if (result.success) {
-              notificationsSent = true;
-              console.log(`Birthday notification sent for ${contact.name}`);
-            } else {
-              console.error(`Failed to send notification for ${contact.name}:`, result.error);
-            }
+          if (result.success) {
+            notificationsSent = true;
+            console.log(`Birthday notification sent for ${contact.name}`);
           } else {
-            console.log('Force check is false, skipping notification');
+            console.error(`Failed to send notification for ${contact.name}:`, result.error);
           }
         }
       }

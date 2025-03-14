@@ -1,7 +1,7 @@
 name: Birthday Notifications
 on:
   schedule:
-    - cron: '0 5 * * *'
+    - cron: '0 10 * * *'
   workflow_dispatch:
 
 jobs:
@@ -28,6 +28,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
         run: |
           TRIGGER_TYPE="${{ github.event_name }}"
+          echo "Trigger type: $TRIGGER_TYPE"
           
           # Form URL based on trigger type
           if [ "$TRIGGER_TYPE" = "workflow_dispatch" ]; then
@@ -38,14 +39,9 @@ jobs:
             API_URL='https://digital-birthday-reminder.vercel.app/api/send-notifications'
           fi
           
-          # Verify environment variables are set
-          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ] || [ -z "$NEXT_PUBLIC_SUPABASE_URL" ]; then
-            echo "Error: Required environment variables are not set"
-            exit 1
-          fi
+          echo "Using API URL: $API_URL"
           
           # Send request with authentication headers
-          echo "Sending request to: $API_URL"
           RESPONSE=$(curl -L -X POST "$API_URL" \
           -H 'Content-Type: application/json' \
           -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
@@ -53,13 +49,4 @@ jobs:
           -w "\nHTTP_STATUS:%{http_code}" \
           -s)
           
-          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d":" -f2)
-          API_RESPONSE=$(echo "$RESPONSE" | grep -v "HTTP_STATUS:")
-          
-          echo "Response status code: $HTTP_STATUS"
-          
-          if [ "$HTTP_STATUS" != "200" ]; then
-            echo "API request failed with status $HTTP_STATUS"
-            echo "Error response: $API_RESPONSE"
-            exit 1
-          fi
+          echo "Full response: $RESPONSE"
