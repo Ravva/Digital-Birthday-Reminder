@@ -16,7 +16,7 @@ export default async function Navbar() {
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link href="/dashboard" prefetch className="flex items-center">
           <img
-            src="/logo.svg"
+            src="/cake.svg"
             alt="Digital Birthday Reminder"
             className="h-10"
           />

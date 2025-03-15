@@ -22,7 +22,7 @@ export default function DashboardNavbar() {
         <div className="flex items-center gap-4">
           <Link href="/dashboard" prefetch className="flex items-center">
             <img
-              src="/logo.svg"
+              src="/cake.svg"
               alt="Digital Birthday Reminder"
               className="h-10"
             />

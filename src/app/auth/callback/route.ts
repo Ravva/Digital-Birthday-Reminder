@@ -4,14 +4,18 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const redirect_to = requestUrl.searchParams.get("redirect_to");
+  const next = requestUrl.searchParams.get("next") || "/dashboard";
 
   if (code) {
     const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    
+    if (error) {
+      console.error("Error exchanging code for session:", error);
+      return NextResponse.redirect(new URL("/sign-in", requestUrl.origin));
+    }
   }
 
   // URL to redirect to after sign in process completes
-  const redirectTo = redirect_to || "/dashboard";
-  return NextResponse.redirect(new URL(redirectTo, requestUrl.origin));
+  return NextResponse.redirect(new URL(next, requestUrl.origin));
 } 

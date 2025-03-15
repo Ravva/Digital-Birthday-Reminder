@@ -5,15 +5,18 @@ export default async function Home() {
   const supabase = await createClient();
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser();
+
+  if (error) {
+    console.error("Error getting user:", error);
+    return redirect("/sign-in");
+  }
 
   // Redirect to dashboard if authenticated, otherwise to sign-in
   if (user) {
-    redirect("/dashboard");
-  } else {
-    redirect("/sign-in");
+    return redirect("/dashboard");
   }
 
-  // This will never be rendered
-  return null;
+  return redirect("/sign-in");
 }

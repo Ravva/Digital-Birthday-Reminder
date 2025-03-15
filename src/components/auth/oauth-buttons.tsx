@@ -2,17 +2,31 @@
 
 import { Button } from "@/components/ui/button";
 import { Github, Loader2 } from "lucide-react";
-import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { createClient } from "../../../supabase/client";
 
 export function OAuthButtons() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isGithubLoading, setIsGithubLoading] = useState(false);
 
   const handleGoogleSignIn = async () => {
-    setIsGoogleLoading(true);
     try {
-      await signIn("google", { callbackUrl: "/dashboard" });
+      setIsGoogleLoading(true);
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      });
+
+      if (error) {
+        console.error("Google sign in error:", error.message);
+      }
     } catch (error) {
       console.error("Google sign in error:", error);
     } finally {
@@ -21,9 +35,19 @@ export function OAuthButtons() {
   };
 
   const handleGithubSignIn = async () => {
-    setIsGithubLoading(true);
     try {
-      await signIn("github", { callbackUrl: "/dashboard" });
+      setIsGithubLoading(true);
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        console.error("GitHub sign in error:", error.message);
+      }
     } catch (error) {
       console.error("GitHub sign in error:", error);
     } finally {
