@@ -28,14 +28,14 @@ export default async function SignUp(props: {
       >
         <div className="p-8 pb-6">
           <div>
-            <div className="flex items-center gap-3">
-              <Link href="/" aria-label="go home">
+            <div className="relative flex items-center justify-center">
+              <Link href="/" aria-label="go home" className="absolute left-0">
                 <img src="/cake.svg" alt="Digital Birthday Reminder" className="h-10" />
               </Link>
-              <span className="text-title mb-1 mt-4 text-xl font-semibold">Birthday Reminder</span>
+              <span className="text-title text-xl font-semibold">Birthday Reminder</span>
             </div>
-            <h1 className="text-title mb-1 mt-4 text-xl font-semibold">Создать аккаунт</h1>
-            <p className="text-sm">Добро пожаловать! Создайте аккаунт, чтобы начать</p>
+            <h1 className="text-title mb-1 mt-4 text-xl font-semibold text-center">Создать аккаунт</h1>
+            <p className="text-sm text-center">Добро пожаловать! Создайте аккаунт, чтобы начать</p>
           </div>
 
           <div className="mt-6">

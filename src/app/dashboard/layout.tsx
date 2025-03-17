@@ -1,4 +1,4 @@
-import Sidebar from "@/components/dashboard/sidebar";
+import DashboardNavigation from "@/components/dashboard/navigation";
 import { AuthCheck } from "@/components/auth/auth-check";
 import { redirect } from "next/navigation";
 import { createClient } from "../../../supabase/server";
@@ -20,9 +20,16 @@ export default async function DashboardLayout({
 
   return (
     <AuthCheck>
-      <div className="flex h-screen bg-gray-50">
-        <Sidebar />
-        <main className="flex-1 overflow-auto">{children}</main>
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white border-b">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center h-16">
+              <img src="/cake.svg" alt="Logo" className="h-8 mr-8" />
+              <DashboardNavigation />
+            </div>
+          </div>
+        </header>
+        <main className="container mx-auto px-4 py-8">{children}</main>
       </div>
     </AuthCheck>
   );

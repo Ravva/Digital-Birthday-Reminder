@@ -90,7 +90,7 @@ export function OAuthButtons() {
             />
           </svg>
         )}
-        Sign in with Google
+        Войти через Google
       </Button>
 
       <Button
@@ -105,7 +105,7 @@ export function OAuthButtons() {
         ) : (
           <Github className="h-5 w-5" />
         )}
-        Sign in with GitHub
+        Войти через GitHub
       </Button>
     </div>
   );
