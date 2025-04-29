@@ -1,19 +1,19 @@
 "use client"
 
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from "recharts"
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, CartesianGrid } from "recharts"
 import { Tables } from "@/types/supabase"
 import { useEffect, useState } from "react"
 
 const monthNames = [
-  "Янв", "Фев", "Мар", "Апр", "Май", "Июн",
-  "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"
+  "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+  "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
 ]
 
-interface OverviewProps {
+interface MonthlyDistributionProps {
   contacts?: Tables<"contacts">[]
 }
 
-export function Overview({ contacts = [] }: OverviewProps) {
+export function MonthlyDistribution({ contacts = [] }: MonthlyDistributionProps) {
   const [chartData, setChartData] = useState<{ name: string; total: number }[]>([])
 
   useEffect(() => {
@@ -43,14 +43,18 @@ export function Overview({ contacts = [] }: OverviewProps) {
   }, [contacts])
 
   return (
-    <ResponsiveContainer width="100%" height={350}>
+    <ResponsiveContainer width="100%" height={400}>
       <BarChart data={chartData}>
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid-color, #ccc)" />
         <XAxis
           dataKey="name"
           stroke="var(--chart-axis-color, #888888)"
           fontSize={12}
           tickLine={false}
           axisLine={false}
+          angle={-45}
+          textAnchor="end"
+          height={80}
         />
         <YAxis
           stroke="var(--chart-axis-color, #888888)"
@@ -69,6 +73,7 @@ export function Overview({ contacts = [] }: OverviewProps) {
             borderRadius: '6px',
           }}
         />
+        <Legend />
         <Bar
           dataKey="total"
           fill="currentColor"
@@ -76,7 +81,6 @@ export function Overview({ contacts = [] }: OverviewProps) {
           className="fill-primary"
           name="Количество контактов"
         />
-        <Legend />
       </BarChart>
     </ResponsiveContainer>
   )

@@ -15,6 +15,10 @@ import {
 import { CalendarDateRangePicker } from "../../components/dashboard/date-range-picker"
 import { Overview } from "../../components/dashboard/overview"
 import { RecentContacts } from "../../components/dashboard/recent-contacts"
+import { MonthlyDistribution } from "../../components/dashboard/monthly-distribution"
+import { AgeDistribution } from "../../components/dashboard/age-distribution"
+import { BirthdayCalendar } from "../../components/dashboard/birthday-calendar"
+import { UpcomingBirthdays } from "../../components/dashboard/upcoming-birthdays"
 import { createClient } from "../../../supabase/server"
 import { Button } from "@/components/ui/button"
 import { Tables } from "@/types/supabase"
@@ -90,7 +94,7 @@ export default async function DashboardPage() {
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
+                <Card className="bg-card/80 backdrop-blur-sm border-border/80 dark:border-border/30">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
                       Всего контактов
@@ -104,7 +108,7 @@ export default async function DashboardPage() {
                     </p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="bg-card/80 backdrop-blur-sm border-border/80 dark:border-border/30">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
                       Дней рождения в этом месяце
@@ -118,7 +122,7 @@ export default async function DashboardPage() {
                     </p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="bg-card/80 backdrop-blur-sm border-border/80 dark:border-border/30">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
                       Статус уведомлений
@@ -132,7 +136,7 @@ export default async function DashboardPage() {
                     </p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="bg-card/80 backdrop-blur-sm border-border/80 dark:border-border/30">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
                       Следующее напоминание
@@ -148,15 +152,15 @@ export default async function DashboardPage() {
                 </Card>
               </div>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-4">
+                <Card className="col-span-4 bg-card/80 backdrop-blur-sm border-border/80 dark:border-border/30">
                   <CardHeader>
                     <CardTitle>Статистика дней рождения</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    <Overview />
+                    <Overview contacts={contacts || []} />
                   </CardContent>
                 </Card>
-                <Card className="col-span-3">
+                <Card className="col-span-3 bg-card/80 backdrop-blur-sm border-border/80 dark:border-border/30">
                   <CardHeader>
                     <CardTitle>Недавние контакты</CardTitle>
                     <CardDescription>
@@ -171,7 +175,7 @@ export default async function DashboardPage() {
             </TabsContent>
             <TabsContent value="analytics" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-4">
+                <Card className="col-span-4 bg-card/80 backdrop-blur-sm border-border/80 dark:border-border/30">
                   <CardHeader>
                     <CardTitle>Распределение по месяцам</CardTitle>
                     <CardDescription>
@@ -179,10 +183,40 @@ export default async function DashboardPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    {/* Добавить компонент с графиком распределения */}
+                    <MonthlyDistribution contacts={contacts || []} />
+                  </CardContent>
+                </Card>
+                <Card className="col-span-3 bg-card/80 backdrop-blur-sm border-border/80 dark:border-border/30">
+                  <CardHeader>
+                    <CardTitle>Возрастное распределение</CardTitle>
+                    <CardDescription>
+                      Распределение контактов по возрастным группам
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <AgeDistribution contacts={contacts || []} />
                   </CardContent>
                 </Card>
               </div>
+
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <div className="col-span-3">
+                  <UpcomingBirthdays contacts={contacts || []} daysAhead={60} />
+                </div>
+                <div className="col-span-4"></div>
+              </div>
+
+              <Card className="bg-card/80 backdrop-blur-sm border-border/80 dark:border-border/30">
+                <CardHeader>
+                  <CardTitle>Календарь дней рождения</CardTitle>
+                  <CardDescription>
+                    Интерактивный календарь с днями рождения
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <BirthdayCalendar contacts={contacts || []} />
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>

@@ -67,3 +67,50 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Стили для фона в зависимости от темы */
+.bg-theme-pattern {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  transition: background 0.5s ease-in-out;
+}
+
+.dark .bg-theme-pattern {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Переменные для графиков */
+:root {
+  --chart-axis-color: #888888;
+  --chart-grid-color: #dddddd;
+  --tooltip-bg: #ffffff;
+  --tooltip-color: #333333;
+  --tooltip-border: #cccccc;
+}
+
+.dark {
+  --chart-axis-color: #aaaaaa;
+  --chart-grid-color: #444444;
+  --tooltip-bg: #1e293b;
+  --tooltip-color: #e2e8f0;
+  --tooltip-border: #475569;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
