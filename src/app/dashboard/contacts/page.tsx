@@ -63,11 +63,11 @@ export default async function ContactsPage() {
             <TabsTrigger value="import">Импорт контактов</TabsTrigger>
           </TabsList>
           <TabsContent value="add">
-            <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <div className="text-center py-12 bg-card dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                 Пока нет контактов
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Добавьте свой первый контакт, чтобы начать получать напоминания
                 о днях рождения.
               </p>

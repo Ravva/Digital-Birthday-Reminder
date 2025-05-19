@@ -127,7 +127,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg border">
+    <div className="max-w-2xl mx-auto bg-card dark:bg-[#1c1c1e] p-6 rounded-xl border border-gray-200 dark:border-[#38383a] shadow-sm">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
@@ -212,7 +212,12 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
           />
 
           <div className="flex gap-4">
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              variant="apple"
+              className="dark:bg-[#0A84FF] dark:text-white dark:hover:bg-[#0A84FF]/90"
+            >
               {isSubmitting
                 ? contact
                   ? "Обновление..."
@@ -225,6 +230,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
               type="button"
               variant="outline"
               onClick={() => router.push("/dashboard/contacts")}
+              className="dark:bg-[#2c2c2e] dark:text-white dark:border-[#38383a] dark:hover:bg-[#3a3a3c]"
             >
               Отмена
             </Button>

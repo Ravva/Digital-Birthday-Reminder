@@ -4,58 +4,60 @@
 
 @layer base {
   :root {
+    /* Apple-inspired color scheme - Light Mode */
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --foreground: 210 11% 15%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 210 11% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --popover-foreground: 210 11% 15%;
+    --primary: 210 100% 50%;  /* Apple Blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 210 11% 15%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 210 11% 45%;
+    --accent: 210 100% 97%;
+    --accent-foreground: 210 100% 50%;
+    --destructive: 0 100% 50%;  /* Apple Red */
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 20% 93%;
+    --input: 210 20% 93%;
+    --ring: 210 100% 50%;
+    --radius: 0.75rem;  /* More rounded corners like Apple */
+    --chart-1: 210 100% 50%;  /* Apple Blue */
+    --chart-2: 160 100% 40%;  /* Apple Green */
+    --chart-3: 330 90% 55%;   /* Apple Pink */
+    --chart-4: 35 100% 50%;   /* Apple Orange */
+    --chart-5: 270 100% 60%;  /* Apple Purple */
   }
 
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* Apple macOS/iOS Dark Mode colors */
+    --background: 220 13% 10%;  /* #1C1C1E - Apple Dark background */
+    --foreground: 240 5% 96%;   /* #F5F5F7 - Apple text color */
+    --card: 220 13% 12%;        /* #2C2C2E - Apple Dark card */
+    --card-foreground: 240 5% 96%; /* #F5F5F7 - Apple text color */
+    --popover: 220 13% 12%;     /* #2C2C2E - Apple Dark popover */
+    --popover-foreground: 240 5% 96%; /* #F5F5F7 - Apple text color */
+    --primary: 210 100% 65%;    /* #0A84FF - Apple Blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 13% 16%;   /* #3A3A3C - Apple Dark secondary */
+    --secondary-foreground: 240 5% 96%;
+    --muted: 220 13% 16%;       /* #3A3A3C - Apple Dark muted */
+    --muted-foreground: 240 5% 70%; /* Apple muted text */
+    --accent: 210 100% 25%;     /* Apple Dark accent */
+    --accent-foreground: 210 100% 65%;
+    --destructive: 0 90% 60%;   /* #FF453A - Apple Red */
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 20%;      /* #38383A - Apple Dark border */
+    --input: 220 13% 20%;       /* #38383A - Apple Dark input */
+    --ring: 210 100% 65%;
+    --chart-1: 210 100% 65%;    /* #0A84FF - Apple Blue */
+    --chart-2: 160 100% 50%;    /* #30D158 - Apple Green */
+    --chart-3: 330 90% 65%;     /* #FF375F - Apple Pink */
+    --chart-4: 35 100% 60%;     /* #FF9F0A - Apple Orange */
+    --chart-5: 270 100% 70%;    /* #BF5AF2 - Apple Purple */
   }
 }
 
@@ -63,14 +65,52 @@
   * {
     @apply border-border;
   }
+  html {
+    /* Запрещаем масштабирование */
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Фиксируем размер шрифта */
+    font-size: 16px !important;
+    /* Запрещаем масштабирование */
+    zoom: 1 !important;
+    -ms-content-zooming: none;
+  }
+
+  /* Типографика в стиле Apple */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl;
+    letter-spacing: -0.025em;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl;
+    letter-spacing: -0.025em;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+    letter-spacing: -0.015em;
+  }
+
+  p {
+    @apply leading-relaxed;
   }
 }
 
-/* Стили для фона в зависимости от темы */
+/* Стили для фона в стиле Apple */
 .bg-theme-pattern {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #f0f0f3 0%, #ffffff 100%);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -78,27 +118,73 @@
 }
 
 .dark .bg-theme-pattern {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 50%, #3a3a3c 100%);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+  /* Добавляем тонкую текстуру, как в macOS */
+  background-image:
+    linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 50%, #3a3a3c 100%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 1%);
+  background-blend-mode: normal, overlay;
 }
 
-/* Переменные для графиков */
+/* Переменные для графиков в стиле Apple */
 :root {
-  --chart-axis-color: #888888;
-  --chart-grid-color: #dddddd;
+  --chart-axis-color: #8e8e93;
+  --chart-grid-color: #e5e5ea;
   --tooltip-bg: #ffffff;
-  --tooltip-color: #333333;
-  --tooltip-border: #cccccc;
+  --tooltip-color: #1d1d1f;
+  --tooltip-border: #e5e5ea;
 }
 
 .dark {
-  --chart-axis-color: #aaaaaa;
-  --chart-grid-color: #444444;
-  --tooltip-bg: #1e293b;
-  --tooltip-color: #e2e8f0;
-  --tooltip-border: #475569;
+  --chart-axis-color: #98989d;  /* Apple серый для осей */
+  --chart-grid-color: #3a3a3c;  /* Apple темно-серый для сетки */
+  --tooltip-bg: #2c2c2e;        /* Apple темный фон для подсказок */
+  --tooltip-color: #f5f5f7;     /* Apple светлый текст */
+  --tooltip-border: #3a3a3c;    /* Apple темно-серая граница */
+  --tooltip-shadow: rgba(0, 0, 0, 0.3); /* Apple тень для подсказок */
+}
+
+/* Стили компонентов в стиле Apple */
+@layer components {
+  /* Кнопки в стиле Apple */
+  .btn-apple {
+    @apply rounded-lg font-medium transition-all duration-300 shadow-sm;
+    @apply bg-primary text-white hover:bg-primary/90 active:scale-[0.98];
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/30;
+  }
+
+  /* Карточки в стиле Apple */
+  .card-apple {
+    @apply rounded-2xl bg-white dark:bg-[#1c1c1e] shadow-sm;
+    @apply border border-[#e5e5ea] dark:border-[#38383a];
+    @apply backdrop-blur-sm transition-all duration-300;
+  }
+
+  /* Карточки с эффектом стекла (как в macOS) */
+  .card-apple-glass {
+    @apply rounded-2xl bg-white/90 dark:bg-[#1c1c1e]/90 shadow-sm;
+    @apply border border-[#e5e5ea] dark:border-[#38383a];
+    @apply backdrop-blur-md transition-all duration-300;
+  }
+
+  /* Поля ввода в стиле Apple */
+  .input-apple {
+    @apply rounded-lg border border-[#e5e5ea] dark:border-[#38383a];
+    @apply bg-white dark:bg-[#1c1c1e] px-4 py-3;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/30;
+  }
+
+  /* Кнопки в стиле macOS */
+  .btn-macos {
+    @apply rounded-md font-medium transition-all duration-200;
+    @apply bg-[#f5f5f7] dark:bg-[#323236] text-[#1d1d1f] dark:text-[#f5f5f7];
+    @apply hover:bg-[#e5e5ea] dark:hover:bg-[#3a3a3c] active:scale-[0.98];
+    @apply border border-[#d1d1d6] dark:border-[#48484a];
+    @apply shadow-sm focus:outline-none;
+  }
 }
 
 /* Анимации */
@@ -142,6 +228,96 @@
   }
 }
 
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+  }
+}
+
+@keyframes darkPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(10, 132, 255, 0.4); /* Apple Blue */
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(10, 132, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(10, 132, 255, 0);
+  }
+}
+
+@keyframes press {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg);
+  }
+  75% {
+    transform: rotate(10deg);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3);
+    transform: scale(1);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(255, 255, 255, 0);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    transform: scale(1);
+  }
+}
+
+@keyframes darkRipple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
+    transform: scale(1);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(0, 0, 0, 0);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -156,4 +332,32 @@
 
 .animate-slideInFromBottom {
   animation: slideInFromBottom 0.3s ease-out;
+}
+
+.animate-pulse-light {
+  animation: pulse 2s infinite;
+}
+
+.animate-pulse-dark {
+  animation: darkPulse 2s infinite;
+}
+
+.animate-press {
+  animation: press 0.2s ease-in-out;
+}
+
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+.animate-ripple-light {
+  animation: ripple 0.6s ease-out;
+}
+
+.animate-ripple-dark {
+  animation: darkRipple 0.6s ease-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }

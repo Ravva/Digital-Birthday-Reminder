@@ -44,18 +44,18 @@ export default function ContactImport({ userId }: ContactImportProps) {
 
           // Get first worksheet
           const worksheet = workbook.worksheets[0];
-          
+
           if (!worksheet) {
             throw new Error('No worksheet found');
           }
 
           // Determine if first row is header
           const firstRow = worksheet.getRow(1);
-          const hasHeader = firstRow.values && Array.isArray(firstRow.values) && 
-            firstRow.values.some(cell => 
-              cell && typeof cell === 'string' && 
-              (cell.toLowerCase().includes('surname') || 
-               cell.toLowerCase().includes('name') || 
+          const hasHeader = firstRow.values && Array.isArray(firstRow.values) &&
+            firstRow.values.some(cell =>
+              cell && typeof cell === 'string' &&
+              (cell.toLowerCase().includes('surname') ||
+               cell.toLowerCase().includes('name') ||
                cell.toLowerCase().includes('birth'))
             );
 
@@ -198,17 +198,17 @@ export default function ContactImport({ userId }: ContactImportProps) {
   };
 
   return (
-    <div className="p-6 border rounded-lg bg-white">
+    <div className="p-6 border border-gray-200 dark:border-[#38383a] rounded-xl bg-card dark:bg-[#1c1c1e] shadow-sm">
       <h2 className="text-xl font-semibold mb-4">Импорт контактов</h2>
 
       <div className="mb-6">
-        <p className="text-sm text-gray-600 mb-2">
+        <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
           Загрузите файл Excel (.xlsx) или CSV с вашими контактами. Файл должен
           содержать столбцы для фамилии, имени и даты рождения (в формате
           дд.мм.гггг).
         </p>
-        <p className="text-sm text-gray-600 mb-4">
-          Пример: <code>Иванов,Иван,01.05.1990</code>
+        <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+          Пример: <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded">Иванов,Иван,01.05.1990</code>
         </p>
       </div>
 
@@ -217,32 +217,41 @@ export default function ContactImport({ userId }: ContactImportProps) {
           type="file"
           accept=".xlsx,.xls,.csv,.txt"
           onChange={handleFileChange}
-          className="block w-full text-sm text-gray-500
+          className="block w-full text-sm text-gray-500 dark:text-gray-300
             file:mr-4 file:py-2 file:px-4
             file:rounded-md file:border-0
             file:text-sm file:font-semibold
             file:bg-blue-50 file:text-blue-700
-            hover:file:bg-blue-100"
+            dark:file:bg-[#0A84FF]/10 dark:file:text-[#0A84FF]
+            hover:file:bg-blue-100 dark:hover:file:bg-[#0A84FF]/20"
         />
 
         <Button
           onClick={handleImport}
           disabled={!file || isUploading}
           className="flex items-center gap-2"
+          variant="apple"
+          className="dark:bg-[#0A84FF] dark:text-white dark:hover:bg-[#0A84FF]/90 flex items-center gap-2"
         >
           {isUploading ? (
-            "Importing..."
+            "Импорт..."
           ) : (
             <>
               <Upload className="w-4 h-4" />
-              Import
+              Импортировать
             </>
           )}
         </Button>
       </div>
 
       {result && (
-        <Alert variant={result.success ? "default" : "destructive"}>
+        <Alert
+          variant={result.success ? "default" : "destructive"}
+          className={result.success ?
+            "dark:bg-[#30D158]/10 dark:border-[#30D158]/30 dark:text-[#30D158]" :
+            "dark:bg-[#FF453A]/10 dark:border-[#FF453A]/30 dark:text-[#FF453A]"
+          }
+        >
           <div className="flex items-center gap-2">
             {result.success ? (
               <CheckCircle2 className="w-4 h-4" />
@@ -250,10 +259,12 @@ export default function ContactImport({ userId }: ContactImportProps) {
               <AlertCircle className="w-4 h-4" />
             )}
             <AlertTitle>
-              {result.success ? "Success" : "Error"}
+              {result.success ? "Успешно" : "Ошибка"}
             </AlertTitle>
           </div>
-          <AlertDescription>{result.message}</AlertDescription>
+          <AlertDescription className={result.success ? "dark:text-[#30D158]/90" : "dark:text-[#FF453A]/90"}>
+            {result.message}
+          </AlertDescription>
         </Alert>
       )}
     </div>

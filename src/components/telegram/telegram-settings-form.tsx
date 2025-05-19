@@ -255,21 +255,21 @@ export default function TelegramSettingsForm({
   }
 
   return (
-    <div className="max-w-2xl mx-auto bg-card dark:bg-gray-800 p-6 rounded-lg border shadow-sm">
+    <div className="max-w-2xl mx-auto bg-card dark:bg-[#1c1c1e] p-6 rounded-xl border border-gray-200 dark:border-[#38383a] shadow-sm">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="bg-blue-50 dark:bg-blue-950/40 p-4 rounded-md mb-6">
-            <h3 className="font-medium text-blue-800 dark:text-blue-300 mb-2">
+          <div className="bg-blue-50 dark:bg-[#0A84FF]/10 p-4 rounded-lg border border-blue-100 dark:border-[#0A84FF]/20 mb-6">
+            <h3 className="font-medium text-blue-800 dark:text-[#0A84FF] mb-2">
               Как настроить интеграцию с Telegram:
             </h3>
-            <ol className="list-decimal pl-5 text-sm text-blue-700 dark:text-blue-300 space-y-2">
+            <ol className="list-decimal pl-5 text-sm text-blue-700 dark:text-[#0A84FF]/90 space-y-2">
               <li>
                 Начните чат с{" "}
                 <a
                   href="https://t.me/BotFather"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline text-blue-600 dark:text-blue-300"
+                  className="underline text-blue-600 dark:text-[#0A84FF] font-medium"
                 >
                   @BotFather
                 </a>{" "}
@@ -290,7 +290,7 @@ export default function TelegramSettingsForm({
                   href="https://t.me/userinfobot"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline text-blue-600 dark:text-blue-300"
+                  className="underline text-blue-600 dark:text-[#0A84FF] font-medium"
                 >
                   @userinfobot
                 </a>{" "}
@@ -484,6 +484,7 @@ export default function TelegramSettingsForm({
                       type="button"
                       variant="outline"
                       onClick={previewMessageTemplate}
+                      className="dark:bg-[#2c2c2e] dark:text-white dark:border-[#38383a] dark:hover:bg-[#3a3a3c]"
                     >
                       Проверить сообщение
                     </Button>
@@ -517,9 +518,24 @@ export default function TelegramSettingsForm({
             />
           </div>
 
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Сохранение..." : "Сохранить настройки"}
-          </Button>
+          <div className="flex gap-4">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              variant="apple"
+              className="dark:bg-[#0A84FF] dark:text-white dark:hover:bg-[#0A84FF]/90"
+            >
+              {isSubmitting ? "Сохранение..." : "Сохранить настройки"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/dashboard")}
+              className="dark:bg-[#2c2c2e] dark:text-white dark:border-[#38383a] dark:hover:bg-[#3a3a3c]"
+            >
+              Отмена
+            </Button>
+          </div>
         </form>
       </Form>
 
@@ -531,11 +547,13 @@ export default function TelegramSettingsForm({
               Так будет выглядеть ваше сообщение в Telegram:
             </DialogDescription>
           </DialogHeader>
-          <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-md mt-2 mb-4">
-            <p className="whitespace-pre-wrap dark:text-gray-100">{previewMessage}</p>
+          <div className="bg-gray-100 dark:bg-[#2c2c2e] p-4 rounded-lg border border-gray-200 dark:border-[#38383a] mt-2 mb-4">
+            <p className="whitespace-pre-wrap dark:text-[#f5f5f7]">{previewMessage}</p>
           </div>
           <div className="flex justify-end">
             <Button
+              variant="apple"
+              className="dark:bg-[#0A84FF] dark:text-white dark:hover:bg-[#0A84FF]/90"
               onClick={async () => {
                 const values = form.getValues();
                 if (!values.bot_token || !values.chat_id) {
