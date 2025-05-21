@@ -125,17 +125,15 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
       ));
       form.setValue("birth_date", utcDate);
 
-      // Небольшая задержка перед закрытием, чтобы пользователь увидел выбранную дату
-      setTimeout(() => {
-        setIsCalendarOpen(false);
-      }, 300);
+      // Закрываем календарь сразу после выбора даты
+      setIsCalendarOpen(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-card/80 p-6 rounded-xl border border-border/30 shadow-sm backdrop-blur-sm">
+    <div className="max-w-2xl mx-auto bg-card/80 p-6 rounded-xl border border-border/30 shadow-sm backdrop-blur-sm overflow-x-hidden">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 overflow-x-hidden">
           <FormField
             control={form.control}
             name="name"
@@ -157,7 +155,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
             control={form.control}
             name="birth_date"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
+              <FormItem className="flex flex-col overflow-x-hidden">
                 <FormLabel>Дата рождения</FormLabel>
                 <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                   <PopoverTrigger asChild>
@@ -165,7 +163,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-[240px] pl-3 text-left font-normal bg-card/90 border-border/50 hover:bg-card shadow-sm",
+                          "w-[200px] pl-3 text-left font-normal bg-card/90 border-border/50 hover:bg-card shadow-sm",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -178,8 +176,20 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-card/95 border-border/50 backdrop-blur-sm shadow-lg" align="start" sideOffset={5}>
+                  <PopoverContent className="w-auto p-0 bg-card/95 border-border/50 backdrop-blur-sm shadow-lg max-h-[400px] overflow-y-auto overflow-x-hidden" align="start" sideOffset={5}>
                     <div className="flex flex-col">
+                      <div className="p-2 pb-0 flex justify-between items-center">
+                        <div className="text-xs font-medium">Выберите дату</div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          type="button"
+                          onClick={() => setIsCalendarOpen(false)}
+                          className="bg-primary text-primary-foreground hover:bg-primary/90 border-none text-xs px-2 py-0 h-6"
+                        >
+                          Готово
+                        </Button>
+                      </div>
                       <YearNavigationCalendar
                         mode="single"
                         selected={field.value instanceof Date ? field.value : undefined}
@@ -190,17 +200,6 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                         initialFocus
                         locale={ru}
                       />
-                      <div className="p-3 pt-0 flex justify-end">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          type="button"
-                          onClick={() => setIsCalendarOpen(false)}
-                          className="bg-primary text-primary-foreground hover:bg-primary/90 border-none"
-                        >
-                          Готово
-                        </Button>
-                      </div>
                     </div>
                   </PopoverContent>
                 </Popover>

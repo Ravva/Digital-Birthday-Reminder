@@ -1,8 +1,11 @@
 "use client"
 
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, CartesianGrid } from "recharts"
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, CartesianGrid, Cell } from "recharts"
 import { Tables } from "@/types/supabase"
 import { useEffect, useState } from "react"
+
+// Цвета для графика
+const COLORS = ['#3b82f6', '#4f46e5', '#8b5cf6', '#d946ef', '#ec4899', '#f43f5e', '#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e'];
 
 const monthNames = [
   "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
@@ -43,45 +46,66 @@ export function MonthlyDistribution({ contacts = [] }: MonthlyDistributionProps)
   }, [contacts])
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <BarChart data={chartData}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid-color, #ccc)" />
-        <XAxis
-          dataKey="name"
-          stroke="var(--chart-axis-color, #888888)"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-          angle={-45}
-          textAnchor="end"
-          height={80}
-        />
-        <YAxis
-          stroke="var(--chart-axis-color, #888888)"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-          tickFormatter={(value) => `${value}`}
-        />
-        <Tooltip
-          formatter={(value) => [`${value} контактов`, 'Количество']}
-          labelFormatter={(label) => `Месяц: ${label}`}
-          contentStyle={{
-            backgroundColor: 'var(--tooltip-bg, #fff)',
-            color: 'var(--tooltip-color, #000)',
-            border: '1px solid var(--tooltip-border, #ccc)',
-            borderRadius: '6px',
-          }}
-        />
-        <Legend />
-        <Bar
-          dataKey="total"
-          fill="currentColor"
-          radius={[4, 4, 0, 0]}
-          className="fill-primary"
-          name="Количество контактов"
-        />
-      </BarChart>
-    </ResponsiveContainer>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-sm font-medium text-muted-foreground">Детальное распределение по месяцам</h3>
+        <div className="text-xs text-muted-foreground bg-card/80 px-2 py-1 rounded-md border border-border/30">
+          Всего: {contacts.length} контактов
+        </div>
+      </div>
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart
+          data={chartData}
+          margin={{ top: 10, right: 10, left: 0, bottom: 80 }}
+          barGap={8}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border, #333)" opacity={0.2} vertical={false} />
+          <XAxis
+            dataKey="name"
+            stroke="var(--chart-axis-color, #888888)"
+            fontSize={12}
+            tickLine={false}
+            axisLine={false}
+            angle={-45}
+            textAnchor="end"
+            height={80}
+            interval={0}
+          />
+          <YAxis
+            stroke="var(--chart-axis-color, #888888)"
+            fontSize={12}
+            tickLine={false}
+            axisLine={false}
+            tickFormatter={(value) => `${value}`}
+          />
+          <Tooltip
+            formatter={(value) => [`${value} контактов`, 'Количество']}
+            labelFormatter={(label) => `Месяц: ${label}`}
+            contentStyle={{
+              backgroundColor: 'var(--tooltip-bg, rgba(30, 41, 59, 0.9))',
+              color: 'var(--tooltip-color, #fff)',
+              border: '1px solid var(--tooltip-border, rgba(71, 85, 105, 0.5))',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            }}
+            cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
+          />
+          <Legend
+            wrapperStyle={{ paddingTop: '10px' }}
+            formatter={(value) => <span style={{ color: 'var(--foreground, #fff)', fontSize: '12px' }}>{value}</span>}
+          />
+          <Bar
+            dataKey="total"
+            name="Количество контактов"
+            radius={[6, 6, 0, 0]}
+          >
+            {chartData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   )
 }

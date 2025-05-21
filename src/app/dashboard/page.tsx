@@ -155,6 +155,9 @@ export default async function DashboardPage() {
                 <Card className="col-span-4 bg-card/80 backdrop-blur-sm border-border/30">
                   <CardHeader>
                     <CardTitle>Статистика дней рождения</CardTitle>
+                    <CardDescription>
+                      Распределение дней рождения по месяцам года
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="pl-2">
                     <Overview contacts={contacts || []} />
