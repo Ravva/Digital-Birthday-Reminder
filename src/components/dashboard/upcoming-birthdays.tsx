@@ -88,7 +88,7 @@ export function UpcomingBirthdays({ contacts = [], daysAhead = 30 }: UpcomingBir
   }
 
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-border/80 dark:border-border/30">
+    <Card className="bg-card/80 backdrop-blur-sm border-border/30">
       <CardHeader>
         <CardTitle>Ближайшие дни рождения</CardTitle>
         <CardDescription>

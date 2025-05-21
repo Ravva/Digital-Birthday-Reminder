@@ -179,7 +179,7 @@ export default function ContactList({ contacts }: ContactListProps) {
 
   return (
     <>
-      <div className="rounded-md border">
+      <div className="rounded-md border border-border/30 bg-card/80 backdrop-blur-sm">
         <Table>
           <TableHeader>
             <TableRow>

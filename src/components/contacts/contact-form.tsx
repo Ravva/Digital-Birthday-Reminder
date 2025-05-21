@@ -19,7 +19,7 @@ import { Tables } from "@/types/supabase";
 import { createClient } from "../../../supabase/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Calendar } from "@/components/ui/calendar";
+import { YearNavigationCalendar } from "@/components/ui/year-navigation-calendar";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
@@ -116,18 +116,24 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
   const onDateSelect = (date: Date | undefined) => {
     if (date) {
       // Устанавливаем дату в UTC для избежания проблем с часовыми поясами
+      // Устанавливаем время на полдень, чтобы избежать проблем с переходом на летнее/зимнее время
       const utcDate = new Date(Date.UTC(
         date.getFullYear(),
         date.getMonth(),
-        date.getDate()
+        date.getDate(),
+        12, 0, 0
       ));
       form.setValue("birth_date", utcDate);
+
+      // Небольшая задержка перед закрытием, чтобы пользователь увидел выбранную дату
+      setTimeout(() => {
+        setIsCalendarOpen(false);
+      }, 300);
     }
-    setIsCalendarOpen(false);
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-card dark:bg-[#1c1c1e] p-6 rounded-xl border border-gray-200 dark:border-[#38383a] shadow-sm">
+    <div className="max-w-2xl mx-auto bg-card/80 p-6 rounded-xl border border-border/30 shadow-sm backdrop-blur-sm">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
@@ -159,7 +165,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
+                          "w-[240px] pl-3 text-left font-normal bg-card/90 border-border/50 hover:bg-card shadow-sm",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -172,17 +178,30 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value instanceof Date ? field.value : undefined}
-                      onSelect={(date) => onDateSelect(date)}
-                      disabled={(date: Date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
-                      initialFocus
-                      locale={ru}
-                    />
+                  <PopoverContent className="w-auto p-0 bg-card/95 border-border/50 backdrop-blur-sm shadow-lg" align="start" sideOffset={5}>
+                    <div className="flex flex-col">
+                      <YearNavigationCalendar
+                        mode="single"
+                        selected={field.value instanceof Date ? field.value : undefined}
+                        onSelect={(date) => onDateSelect(date)}
+                        disabled={(date: Date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                        locale={ru}
+                      />
+                      <div className="p-3 pt-0 flex justify-end">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          type="button"
+                          onClick={() => setIsCalendarOpen(false)}
+                          className="bg-primary text-primary-foreground hover:bg-primary/90 border-none"
+                        >
+                          Готово
+                        </Button>
+                      </div>
+                    </div>
                   </PopoverContent>
                 </Popover>
                 <FormMessage />
@@ -215,8 +234,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
             <Button
               type="submit"
               disabled={isSubmitting}
-              variant="apple"
-              className="dark:bg-[#0A84FF] dark:text-white dark:hover:bg-[#0A84FF]/90"
+              variant="default"
             >
               {isSubmitting
                 ? contact
@@ -230,7 +248,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
               type="button"
               variant="outline"
               onClick={() => router.push("/dashboard/contacts")}
-              className="dark:bg-[#2c2c2e] dark:text-white dark:border-[#38383a] dark:hover:bg-[#3a3a3c]"
+              className="bg-card/80 text-foreground border-border/30 hover:bg-card"
             >
               Отмена
             </Button>

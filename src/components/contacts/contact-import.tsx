@@ -198,17 +198,17 @@ export default function ContactImport({ userId }: ContactImportProps) {
   };
 
   return (
-    <div className="p-6 border border-gray-200 dark:border-[#38383a] rounded-xl bg-card dark:bg-[#1c1c1e] shadow-sm">
+    <div className="p-6 border border-border/30 rounded-xl bg-card/80 backdrop-blur-sm shadow-sm">
       <h2 className="text-xl font-semibold mb-4">Импорт контактов</h2>
 
       <div className="mb-6">
-        <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+        <p className="text-sm text-muted-foreground mb-2">
           Загрузите файл Excel (.xlsx) или CSV с вашими контактами. Файл должен
           содержать столбцы для фамилии, имени и даты рождения (в формате
           дд.мм.гггг).
         </p>
-        <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-          Пример: <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded">Иванов,Иван,01.05.1990</code>
+        <p className="text-sm text-muted-foreground mb-4">
+          Пример: <code className="bg-card px-1.5 py-0.5 rounded border border-border/30">Иванов,Иван,01.05.1990</code>
         </p>
       </div>
 
@@ -217,21 +217,19 @@ export default function ContactImport({ userId }: ContactImportProps) {
           type="file"
           accept=".xlsx,.xls,.csv,.txt"
           onChange={handleFileChange}
-          className="block w-full text-sm text-gray-500 dark:text-gray-300
+          className="block w-full text-sm text-foreground
             file:mr-4 file:py-2 file:px-4
             file:rounded-md file:border-0
             file:text-sm file:font-semibold
-            file:bg-blue-50 file:text-blue-700
-            dark:file:bg-[#0A84FF]/10 dark:file:text-[#0A84FF]
-            hover:file:bg-blue-100 dark:hover:file:bg-[#0A84FF]/20"
+            file:bg-primary/10 file:text-primary
+            hover:file:bg-primary/20"
         />
 
         <Button
           onClick={handleImport}
           disabled={!file || isUploading}
+          variant="default"
           className="flex items-center gap-2"
-          variant="apple"
-          className="dark:bg-[#0A84FF] dark:text-white dark:hover:bg-[#0A84FF]/90 flex items-center gap-2"
         >
           {isUploading ? (
             "Импорт..."
@@ -248,8 +246,8 @@ export default function ContactImport({ userId }: ContactImportProps) {
         <Alert
           variant={result.success ? "default" : "destructive"}
           className={result.success ?
-            "dark:bg-[#30D158]/10 dark:border-[#30D158]/30 dark:text-[#30D158]" :
-            "dark:bg-[#FF453A]/10 dark:border-[#FF453A]/30 dark:text-[#FF453A]"
+            "bg-[#30D158]/10 border-[#30D158]/30 text-[#30D158]" :
+            "bg-[#FF453A]/10 border-[#FF453A]/30 text-[#FF453A]"
           }
         >
           <div className="flex items-center gap-2">
@@ -262,7 +260,7 @@ export default function ContactImport({ userId }: ContactImportProps) {
               {result.success ? "Успешно" : "Ошибка"}
             </AlertTitle>
           </div>
-          <AlertDescription className={result.success ? "dark:text-[#30D158]/90" : "dark:text-[#FF453A]/90"}>
+          <AlertDescription className={result.success ? "text-[#30D158]/90" : "text-[#FF453A]/90"}>
             {result.message}
           </AlertDescription>
         </Alert>

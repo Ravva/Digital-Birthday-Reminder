@@ -33,31 +33,31 @@
   }
 
   .dark {
-    /* Apple macOS/iOS Dark Mode colors */
-    --background: 220 13% 10%;  /* #1C1C1E - Apple Dark background */
-    --foreground: 240 5% 96%;   /* #F5F5F7 - Apple text color */
-    --card: 220 13% 12%;        /* #2C2C2E - Apple Dark card */
-    --card-foreground: 240 5% 96%; /* #F5F5F7 - Apple text color */
-    --popover: 220 13% 12%;     /* #2C2C2E - Apple Dark popover */
-    --popover-foreground: 240 5% 96%; /* #F5F5F7 - Apple text color */
-    --primary: 210 100% 65%;    /* #0A84FF - Apple Blue */
+    /* Темно-синий стиль как на скриншоте */
+    --background: 220 30% 13%;  /* #1a1f2e - Темно-синий фон */
+    --foreground: 0 0% 100%;    /* #FFFFFF - Белый текст */
+    --card: 220 30% 15%;        /* #1e2436 - Темно-синяя карточка */
+    --card-foreground: 0 0% 100%; /* #FFFFFF - Белый текст */
+    --popover: 220 30% 15%;     /* #1e2436 - Темно-синий popover */
+    --popover-foreground: 0 0% 100%; /* #FFFFFF - Белый текст */
+    --primary: 210 100% 65%;    /* #0A84FF - Синий */
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 13% 16%;   /* #3A3A3C - Apple Dark secondary */
-    --secondary-foreground: 240 5% 96%;
-    --muted: 220 13% 16%;       /* #3A3A3C - Apple Dark muted */
-    --muted-foreground: 240 5% 70%; /* Apple muted text */
-    --accent: 210 100% 25%;     /* Apple Dark accent */
+    --secondary: 220 30% 20%;   /* #252c42 - Темно-синий secondary */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 30% 20%;       /* #252c42 - Темно-синий muted */
+    --muted-foreground: 220 15% 70%; /* Приглушенный текст */
+    --accent: 210 100% 25%;     /* Темно-синий accent */
     --accent-foreground: 210 100% 65%;
-    --destructive: 0 90% 60%;   /* #FF453A - Apple Red */
+    --destructive: 0 90% 60%;   /* #FF453A - Красный */
     --destructive-foreground: 0 0% 100%;
-    --border: 220 13% 20%;      /* #38383A - Apple Dark border */
-    --input: 220 13% 20%;       /* #38383A - Apple Dark input */
+    --border: 220 30% 25%;      /* #2a3249 - Темно-синяя граница */
+    --input: 220 30% 25%;       /* #2a3249 - Темно-синий input */
     --ring: 210 100% 65%;
-    --chart-1: 210 100% 65%;    /* #0A84FF - Apple Blue */
-    --chart-2: 160 100% 50%;    /* #30D158 - Apple Green */
-    --chart-3: 330 90% 65%;     /* #FF375F - Apple Pink */
-    --chart-4: 35 100% 60%;     /* #FF9F0A - Apple Orange */
-    --chart-5: 270 100% 70%;    /* #BF5AF2 - Apple Purple */
+    --chart-1: 210 100% 65%;    /* #0A84FF - Синий */
+    --chart-2: 160 100% 50%;    /* #30D158 - Зеленый */
+    --chart-3: 330 90% 65%;     /* #FF375F - Розовый */
+    --chart-4: 35 100% 60%;     /* #FF9F0A - Оранжевый */
+    --chart-5: 270 100% 70%;    /* #BF5AF2 - Фиолетовый */
   }
 }
 
@@ -118,15 +118,10 @@
 }
 
 .dark .bg-theme-pattern {
-  background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 50%, #3a3a3c 100%);
+  background: #1a1f2e; /* Сплошной темно-синий фон как на скриншоте */
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  /* Добавляем тонкую текстуру, как в macOS */
-  background-image:
-    linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 50%, #3a3a3c 100%),
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 1%);
-  background-blend-mode: normal, overlay;
 }
 
 /* Переменные для графиков в стиле Apple */

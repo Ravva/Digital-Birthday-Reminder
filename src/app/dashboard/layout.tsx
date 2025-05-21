@@ -22,8 +22,8 @@ export default async function DashboardLayout({
   return (
     <AuthCheck>
       <div className="min-h-screen bg-theme-pattern transition-all duration-500">
-        <div className="min-h-screen bg-background/90 dark:bg-gray-900/90 backdrop-blur-sm transition-all duration-500">
-          <header className="bg-background/95 dark:bg-gray-800/95 border-b border-border backdrop-blur-sm transition-all duration-500">
+        <div className="min-h-screen transition-all duration-500">
+          <header className="bg-card/95 border-b border-border/30 backdrop-blur-sm transition-all duration-500">
             <div className="container mx-auto px-4">
               <div className="flex items-center h-16">
                 <img src="/cake.svg" alt="Logo" className="h-8 mr-8" />

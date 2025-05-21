@@ -91,7 +91,7 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <Card className="bg-card/80 backdrop-blur-sm border-border/80 dark:border-border/30">
+      <Card className="bg-card/80 backdrop-blur-sm border-border/30">
         <CardHeader>
           <CardTitle>Календарь дней рождения</CardTitle>
           <CardDescription>
@@ -104,7 +104,7 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
             selected={date}
             onSelect={handleSelect}
             locale={ru}
-            className="rounded-md border dark:bg-gray-800/50 dark:text-gray-100"
+            className="rounded-md border border-border/30 bg-card/80 text-foreground"
             modifiers={{
               birthday: (date) => hasBirthday(date)
             }}
@@ -125,7 +125,7 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
         </CardContent>
       </Card>
 
-      <Card className="bg-card/80 backdrop-blur-sm border-border/80 dark:border-border/30">
+      <Card className="bg-card/80 backdrop-blur-sm border-border/30">
         <CardHeader>
           <CardTitle>
             {date ? (
@@ -153,7 +153,7 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
                       {calculateAge(contact.birth_date)} лет
                     </p>
                   </div>
-                  <Badge variant="outline">
+                  <Badge variant="outline" className="border-border/30 bg-card/80">
                     {new Date(contact.birth_date).getFullYear()}
                   </Badge>
                 </div>
