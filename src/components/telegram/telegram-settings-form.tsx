@@ -258,18 +258,19 @@ export default function TelegramSettingsForm({
     <div className="max-w-2xl mx-auto bg-card p-6 rounded-lg border shadow-sm">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="bg-blue-50 p-4 rounded-md mb-6">
-            <h3 className="font-medium text-blue-800 mb-2">
+          <div className="bg-[#0A84FF]/10 p-4 rounded-lg border border-[#0A84FF]/20 mb-6">
+            <h3 className="font-medium text-[#0A84FF] mb-2 flex items-center gap-2 text-sm">
+              <InfoIcon className="h-4 w-4" />
               Как настроить интеграцию с Telegram:
             </h3>
-            <ol className="list-decimal pl-5 text-sm text-blue-700 space-y-2">
+            <ol className="list-decimal pl-5 text-[#0A84FF]/90 space-y-1 ml-2 text-sm">
               <li>
                 Начните чат с{" "}
                 <a
                   href="https://t.me/BotFather"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline text-blue-600"
+                  className="underline text-[#0A84FF] hover:text-[#0A84FF]/80 text-sm"
                 >
                   @BotFather
                 </a>{" "}
@@ -290,7 +291,7 @@ export default function TelegramSettingsForm({
                   href="https://t.me/userinfobot"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline text-blue-600"
+                  className="underline text-[#0A84FF] hover:text-[#0A84FF]/80 text-sm"
                 >
                   @userinfobot
                 </a>{" "}
@@ -342,7 +343,7 @@ export default function TelegramSettingsForm({
           <div className="flex gap-4">
             <Button
               type="button"
-              variant="outline"
+              variant="default"
               onClick={testConnection}
               disabled={
                 isSubmitting ||
@@ -482,9 +483,8 @@ export default function TelegramSettingsForm({
                   <div className="mt-2">
                     <Button
                       type="button"
-                      variant="outline"
+                      variant="default"
                       onClick={previewMessageTemplate}
-                      className="bg-card/80 text-foreground border-border/30 hover:bg-card"
                     >
                       Проверить сообщение
                     </Button>

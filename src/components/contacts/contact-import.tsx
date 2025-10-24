@@ -67,11 +67,25 @@ export default function ContactImport({ userId }: ContactImportProps) {
             const values = row.values as any[];
             if (!values || values.length < 3) return;
 
-            const surname = String(values[1] || '').trim();
-            const firstName = String(values[2] || '').trim();
+            // Handle the new name format: Lastname Firstname Patronymic
+            const fullName = String(values[1] || '').trim();
+            let surname = '';
+            let firstName = '';
+            
+            if (fullName) {
+              const nameParts = fullName.split(' ');
+              if (nameParts.length >= 1) {
+                surname = nameParts[0]; // First part is surname
+              }
+              if (nameParts.length >= 2) {
+                // Combine remaining parts as first name (including patronymic)
+                firstName = nameParts.slice(1).join(' ');
+              }
+            }
+
             let birthDate: Date | null = null;
 
-            const birthDateValue = values[3];
+            const birthDateValue = values[2];
             if (birthDateValue instanceof Date) {
               birthDate = birthDateValue;
             } else if (typeof birthDateValue === 'string' && birthDateValue.includes('.')) {
@@ -82,12 +96,14 @@ export default function ContactImport({ userId }: ContactImportProps) {
             }
 
             if (surname && firstName && birthDate && !isNaN(birthDate.getTime())) {
+              // Store in format: Lastname Firstname Patronymic (as expected by the display functions)
               result.push({
-                name: `${firstName} ${surname}`,
+                name: `${surname} ${firstName}`,
                 birth_date: birthDate.toISOString().split('T')[0],
               });
             }
           });
+
         } else {
           // Handle CSV file
           const text = await file.text();
@@ -106,9 +122,23 @@ export default function ContactImport({ userId }: ContactImportProps) {
             const columns = line.split(',');
             if (columns.length < 3) continue;
 
-            const surname = columns[0].trim();
-            const firstName = columns[1].trim();
-            const birthDateStr = columns[2].trim();
+            // Handle the new name format: Lastname Firstname Patronymic
+            const fullName = columns[0].trim();
+            let surname = '';
+            let firstName = '';
+            
+            if (fullName) {
+              const nameParts = fullName.split(' ');
+              if (nameParts.length >= 1) {
+                surname = nameParts[0]; // First part is surname
+              }
+              if (nameParts.length >= 2) {
+                // Combine remaining parts as first name (including patronymic)
+                firstName = nameParts.slice(1).join(' ');
+              }
+            }
+
+            const birthDateStr = columns[1].trim();
 
             let birthDate: Date | null = null;
             if (birthDateStr.includes('.')) {
@@ -119,8 +149,9 @@ export default function ContactImport({ userId }: ContactImportProps) {
             }
 
             if (surname && firstName && birthDate && !isNaN(birthDate.getTime())) {
+              // Store in format: Lastname Firstname Patronymic (as expected by the display functions)
               result.push({
-                name: `${firstName} ${surname}`,
+                name: `${surname} ${firstName}`,
                 birth_date: birthDate.toISOString().split('T')[0],
               });
             }
@@ -208,7 +239,7 @@ export default function ContactImport({ userId }: ContactImportProps) {
           дд.мм.гггг).
         </p>
         <p className="text-sm text-muted-foreground mb-4">
-          Пример: <code className="bg-card px-1.5 py-0.5 rounded border border-border/30">Иванов,Иван,01.05.1990</code>
+          Пример: <code className="bg-card px-1.5 py-0.5 rounded border border-border/30">Иванов Иван Иванович,01.05.1990</code>
         </p>
       </div>
 

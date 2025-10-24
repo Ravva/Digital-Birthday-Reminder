@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "../../../../supabase/server";
 import { Tables } from "@/types/supabase";
-import ContactList from "@/components/contacts/contact-list";
+import { DataTable } from "@/components/contacts/data-table";
+import { columns } from "@/components/contacts/columns";
 import { Button } from "@/components/ui/button";
 import { Plus, Upload } from "lucide-react";
 import Link from "next/link";
@@ -50,7 +51,7 @@ export default async function ContactsPage() {
             <TabsTrigger value="import">Импорт контактов</TabsTrigger>
           </TabsList>
           <TabsContent value="list">
-            <ContactList contacts={contacts as Tables<"contacts">[]} />
+            <DataTable columns={columns} data={contacts as Tables<"contacts">[]} />
           </TabsContent>
           <TabsContent value="import">
             <ContactImport userId={user.id} />

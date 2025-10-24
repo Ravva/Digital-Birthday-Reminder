@@ -47,9 +47,17 @@ export default async function SignInPage({ searchParams }: LoginProps) {
 
           <div className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="block text-sm">
-                Email
-              </Label>
+              <div className="flex justify-between items-center">
+                <Label htmlFor="email" className="block text-sm">
+                  Email
+                </Label>
+                <Link
+                  className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-all"
+                  href="/forgot-password"
+                >
+                  Забыли пароль?
+                </Link>
+              </div>
               <Input 
                 type="email" 
                 required 
@@ -60,17 +68,9 @@ export default async function SignInPage({ searchParams }: LoginProps) {
             </div>
 
             <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="password" className="text-sm">
-                  Пароль
-                </Label>
-                <Link
-                  className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-all"
-                  href="/forgot-password"
-                >
-                  Забыли пароль?
-                </Link>
-              </div>
+              <Label htmlFor="password" className="text-sm">
+                Пароль
+              </Label>
               <Input 
                 type="password" 
                 required 

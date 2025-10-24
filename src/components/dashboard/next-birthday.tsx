@@ -1,11 +1,12 @@
-"use client"
+"use client";
 
-import { Tables } from "@/types/supabase"
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Cake } from "lucide-react"
+import { Tables } from "@/types/supabase";
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Cake } from "lucide-react";
+import { formatFullName } from "@/utils/name-formatter";
 
 interface NextBirthdayProps {
   contacts?: Tables<"contacts">[]
@@ -106,11 +107,11 @@ export function NextBirthday({ contacts = [], variant = "full" }: NextBirthdayPr
       <div className="flex items-center space-x-2">
         <Avatar className="h-6 w-6 border border-border/50">
           <AvatarFallback className="bg-primary/10 text-primary text-xs">
-            {nextBirthday.name.split(" ").map(n => n[0]).join("")}
+            {formatFullName(nextBirthday.name).split(" ").map(n => n[0]).join("")}
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
-          <span className="text-sm font-medium">{nextBirthday.name}</span>
+          <span className="text-sm font-medium">{formatFullName(nextBirthday.name)}</span>
           <div className="flex items-center space-x-1">
             <span className="text-xs text-muted-foreground">
               {new Date(nextBirthday.birth_date).toLocaleDateString("ru-RU", {
@@ -159,11 +160,11 @@ export function NextBirthday({ contacts = [], variant = "full" }: NextBirthdayPr
         <div className="flex items-center space-x-3">
           <Avatar className="h-10 w-10 border border-border/50">
             <AvatarFallback className="bg-primary/10 text-primary">
-              {nextBirthday.name.split(" ").map(n => n[0]).join("")}
+              {formatFullName(nextBirthday.name).split(" ").map(n => n[0]).join("")}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{nextBirthday.name}</p>
+            <p className="text-sm font-medium truncate">{formatFullName(nextBirthday.name)}</p>
             <p className="text-xs text-muted-foreground truncate">
               {new Date(nextBirthday.birth_date).toLocaleDateString("ru-RU", {
                 day: "numeric",

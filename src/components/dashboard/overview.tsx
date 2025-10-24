@@ -50,7 +50,7 @@ export function Overview({ contacts = [] }: OverviewProps) {
       <div className="flex justify-between items-center">
         <h3 className="text-sm font-medium text-muted-foreground">Распределение дней рождения по месяцам</h3>
         <div className="text-xs text-muted-foreground bg-card/80 px-2 py-1 rounded-md border border-border/30">
-          Всего: {contacts.length} контактов
+          Всего контактов: {contacts.length}
         </div>
       </div>
       <ResponsiveContainer width="100%" height={350}>
@@ -75,7 +75,7 @@ export function Overview({ contacts = [] }: OverviewProps) {
             tickFormatter={(value) => `${value}`}
           />
           <Tooltip
-            formatter={(value) => [`${value} контактов`, 'Количество']}
+            formatter={(value) => [`${value} дней рождения`, 'Количество']}
             labelFormatter={(label) => `Месяц: ${label}`}
             contentStyle={{
               backgroundColor: 'var(--tooltip-bg, rgba(30, 41, 59, 0.9))',
@@ -93,7 +93,7 @@ export function Overview({ contacts = [] }: OverviewProps) {
           />
           <Bar
             dataKey="total"
-            name="Количество контактов"
+            name="Дней рождения/месяц"
             radius={[6, 6, 0, 0]}
           >
             {chartData.map((entry, index) => (

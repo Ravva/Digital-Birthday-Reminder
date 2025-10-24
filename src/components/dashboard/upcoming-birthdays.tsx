@@ -1,11 +1,12 @@
-"use client"
+"use client";
 
-import { Tables } from "@/types/supabase"
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { Tables } from "@/types/supabase";
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatFullName } from "@/utils/name-formatter";
 
 interface UpcomingBirthdaysProps {
   contacts?: Tables<"contacts">[]
@@ -101,7 +102,7 @@ export function UpcomingBirthdays({ contacts = [], daysAhead = 30 }: UpcomingBir
                 </AvatarFallback>
               </Avatar>
               <div className="ml-4 space-y-1">
-                <p className="text-sm font-medium leading-none">{contact.name}</p>
+                <p className="text-sm font-medium leading-none">{formatFullName(contact.name)}</p>
                 <p className="text-sm text-muted-foreground">
                   {new Date(contact.birth_date).toLocaleDateString("ru-RU", {
                     day: "numeric",
