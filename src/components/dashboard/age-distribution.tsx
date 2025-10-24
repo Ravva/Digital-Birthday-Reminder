@@ -5,7 +5,7 @@ import { Tables } from "@/types/supabase"
 import { useEffect, useState } from "react"
 
 // Цвета для диаграммы
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
+const COLORS = ['#3b82f6', '#4f46e5', '#8b5cf6', '#d946ef', '#ec4899', '#f43f5e'];
 
 interface AgeDistributionProps {
   contacts?: Tables<"contacts">[]
@@ -84,33 +84,61 @@ export function AgeDistribution({ contacts = [] }: AgeDistributionProps) {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <PieChart>
-        <Pie
-          data={chartData}
-          cx="50%"
-          cy="50%"
-          labelLine={true}
-          outerRadius={150}
-          fill="#8884d8"
-          dataKey="value"
-          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-        >
-          {chartData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip
-          formatter={(value) => [`${value} контактов`, 'Количество']}
-          contentStyle={{
-            backgroundColor: 'var(--tooltip-bg, #fff)',
-            color: 'var(--tooltip-color, #000)',
-            border: '1px solid var(--tooltip-border, #ccc)',
-            borderRadius: '6px',
-          }}
-        />
-        <Legend />
-      </PieChart>
-    </ResponsiveContainer>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-sm font-medium text-muted-foreground">Распределение по возрастным группам</h3>
+        <div className="text-xs text-muted-foreground bg-card/80 px-2 py-1 rounded-md border border-border/30">
+          Всего: {contacts.length} контактов
+        </div>
+      </div>
+      <ResponsiveContainer width="100%" height={400}>
+        <PieChart>
+          <Pie
+            data={chartData}
+            cx="50%"
+            cy="50%"
+            labelLine={true}
+            outerRadius={140}
+            innerRadius={60}
+            fill="#8884d8"
+            dataKey="value"
+            paddingAngle={2}
+            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+            labelStyle={{ fill: 'var(--foreground, #fff)', fontSize: '12px' }}
+          >
+            {chartData.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+                stroke="var(--background, #1e293b)"
+                strokeWidth={2}
+              />
+            ))}
+          </Pie>
+          <Tooltip
+            formatter={(value) => [`${value} контактов`, 'Количество']}
+            contentStyle={{
+              backgroundColor: 'var(--tooltip-bg, rgba(30, 41, 59, 0.9))',
+              color: 'var(--tooltip-color, #fff)',
+              border: '1px solid var(--tooltip-border, rgba(71, 85, 105, 0.5))',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            }}
+          />
+          <Legend
+            formatter={(value, entry) => (
+              <span style={{ color: 'var(--foreground, #fff)', fontSize: '12px' }}>
+                {value}
+              </span>
+            )}
+            layout="horizontal"
+            verticalAlign="bottom"
+            align="center"
+            wrapperStyle={{ paddingTop: '20px' }}
+          />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
   )
 }

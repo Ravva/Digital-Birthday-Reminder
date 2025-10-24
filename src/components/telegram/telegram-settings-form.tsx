@@ -484,6 +484,7 @@ export default function TelegramSettingsForm({
                       type="button"
                       variant="outline"
                       onClick={previewMessageTemplate}
+                      className="bg-card/80 text-foreground border-border/30 hover:bg-card"
                     >
                       Проверить сообщение
                     </Button>
@@ -517,9 +518,24 @@ export default function TelegramSettingsForm({
             />
           </div>
 
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Сохранение..." : "Сохранить настройки"}
-          </Button>
+          <div className="flex gap-4">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              variant="apple"
+              className="dark:bg-[#0A84FF] dark:text-white dark:hover:bg-[#0A84FF]/90"
+            >
+              {isSubmitting ? "Сохранение..." : "Сохранить настройки"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/dashboard")}
+              className="dark:bg-[#2c2c2e] dark:text-white dark:border-[#38383a] dark:hover:bg-[#3a3a3c]"
+            >
+              Отмена
+            </Button>
+          </div>
         </form>
       </Form>
 
@@ -536,6 +552,8 @@ export default function TelegramSettingsForm({
           </div>
           <div className="flex justify-end">
             <Button
+              variant="apple"
+              className="dark:bg-[#0A84FF] dark:text-white dark:hover:bg-[#0A84FF]/90"
               onClick={async () => {
                 const values = form.getValues();
                 if (!values.bot_token || !values.chat_id) {

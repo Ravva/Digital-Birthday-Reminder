@@ -3,11 +3,15 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { TempoInit } from "@/components/tempo-init";
+import { ZoomLock } from "@/components/zoom-lock";
 
-const inter = Inter({ 
+// Используем Inter - современный шрифт, похожий на используемый в Apple
+const inter = Inter({
   subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600", "700"],
   preload: true,
-  display: 'swap'
+  display: 'swap',
+  variable: '--font-inter'
 });
 
 export const metadata: Metadata = {
@@ -26,6 +30,7 @@ export default function RootLayout({
       <body className={inter.className}>
         {children}
         <TempoInit />
+        <ZoomLock />
       </body>
     </html>
   );

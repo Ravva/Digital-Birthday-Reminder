@@ -4,31 +4,32 @@
 
 @layer base {
   :root {
+    /* Apple-inspired color scheme - Light Mode */
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --foreground: 210 11% 15%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 210 11% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --popover-foreground: 210 11% 15%;
+    --primary: 210 100% 50%;  /* Apple Blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 210 11% 15%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 210 11% 45%;
+    --accent: 210 100% 97%;
+    --accent-foreground: 210 100% 50%;
+    --destructive: 0 100% 50%;  /* Apple Red */
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 20% 93%;
+    --input: 210 20% 93%;
+    --ring: 210 100% 50%;
+    --radius: 0.75rem;  /* More rounded corners like Apple */
+    --chart-1: 210 100% 50%;  /* Apple Blue */
+    --chart-2: 160 100% 40%;  /* Apple Green */
+    --chart-3: 330 90% 55%;   /* Apple Pink */
+    --chart-4: 35 100% 50%;   /* Apple Orange */
+    --chart-5: 270 100% 60%;  /* Apple Purple */
   }
 }
 
@@ -36,14 +37,52 @@
   * {
     @apply border-border;
   }
+  html {
+    /* Запрещаем масштабирование */
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Фиксируем размер шрифта */
+    font-size: 16px !important;
+    /* Запрещаем масштабирование */
+    zoom: 1 !important;
+    -ms-content-zooming: none;
+  }
+
+  /* Типографика в стиле Apple */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl;
+    letter-spacing: -0.025em;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl;
+    letter-spacing: -0.025em;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+    letter-spacing: -0.015em;
+  }
+
+  p {
+    @apply leading-relaxed;
   }
 }
 
-/* Стили для фона в зависимости от темы */
+/* Стили для фона в стиле Apple */
 .bg-theme-pattern {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #f0f0f3 0%, #ffffff 100%);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -52,11 +91,11 @@
 
 /* Переменные для графиков */
 :root {
-  --chart-axis-color: #888888;
-  --chart-grid-color: #dddddd;
+  --chart-axis-color: #8e8e93;
+  --chart-grid-color: #e5e5ea;
   --tooltip-bg: #ffffff;
-  --tooltip-color: #333333;
-  --tooltip-border: #cccccc;
+  --tooltip-color: #1d1d1f;
+  --tooltip-border: #e5e5ea;
 }
 
 /* Анимации */
@@ -69,6 +108,167 @@
   }
 }
 
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+  }
+}
+
+@keyframes darkPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(10, 132, 255, 0.4); /* Apple Blue */
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(10, 132, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(10, 132, 255, 0);
+  }
+}
+
+@keyframes press {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg);
+  }
+  75% {
+    transform: rotate(10deg);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3);
+    transform: scale(1);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(255, 255, 255, 0);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    transform: scale(1);
+  }
+}
+
+@keyframes darkRipple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
+    transform: scale(1);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(0, 0, 0, 0);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-rotate {
+  animation: rotate 0.5s ease-in-out;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.animate-slideInFromBottom {
+  animation: slideInFromBottom 0.3s ease-out;
+}
+
+.animate-pulse-light {
+  animation: pulse 2s infinite;
+}
+
+.animate-pulse-dark {
+  animation: darkPulse 2s infinite;
+}
+
+.animate-press {
+  animation: press 0.2s ease-in-out;
+}
+
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+.animate-ripple-light {
+  animation: ripple 0.6s ease-out;
+}
+
+.animate-ripple-dark {
+  animation: darkRipple 0.6s ease-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }

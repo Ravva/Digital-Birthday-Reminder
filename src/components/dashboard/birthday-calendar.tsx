@@ -153,7 +153,7 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
                       {calculateAge(contact.birth_date)} лет
                     </p>
                   </div>
-                  <Badge variant="outline">
+                  <Badge variant="outline" className="border-border/30 bg-card/80">
                     {new Date(contact.birth_date).getFullYear()}
                   </Badge>
                 </div>
