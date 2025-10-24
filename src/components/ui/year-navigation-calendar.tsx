@@ -18,13 +18,28 @@ function YearNavigationCalendar({
   onYearChange,
   ...props
 }: YearNavigationCalendarProps) {
-  const [currentDate, setCurrentDate] = React.useState<Date>(
-    props.defaultMonth || props.selected instanceof Date
-      ? props.selected
-      : Array.isArray(props.selected) && props.selected.length > 0
-        ? props.selected[0]
-        : new Date()
-  );
+  const [currentDate, setCurrentDate] = React.useState<Date>(() => {
+    // Проверяем defaultMonth
+    if (props.defaultMonth instanceof Date) {
+      return props.defaultMonth;
+    }
+    
+    // Проверяем selected
+    if (props.selected instanceof Date) {
+      return props.selected;
+    }
+    
+    // Проверяем массив selected
+    if (Array.isArray(props.selected) && props.selected.length > 0) {
+      const firstDate = props.selected[0];
+      if (firstDate instanceof Date) {
+        return firstDate;
+      }
+    }
+    
+    // По умолчанию используем текущую дату
+    return new Date();
+  });
 
   // Обработчик изменения месяца из DayPicker
   React.useEffect(() => {
