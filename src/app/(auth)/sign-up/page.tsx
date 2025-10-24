@@ -22,7 +22,7 @@ export default async function SignUp(props: {
   }
 
   return (
-    <section className="flex min-h-screen bg-zinc-50 px-4 py-16 md:py-32 dark:bg-transparent">
+    <section className="flex min-h-screen bg-zinc-50 px-4 py-16 md:py-32">
       <form 
         className="bg-card m-auto h-fit w-full max-w-sm rounded-[calc(var(--radius)+.125rem)] border p-0.5 shadow-md"
       >

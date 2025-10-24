@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "ask": [
+      "Read(!C:\\Users\\Ravva\\Digital-Birthday-Reminder/**)",
+      "Edit(!C:\\Users\\Ravva\\Digital-Birthday-Reminder/**)"
+    ],
+    "allow": [
+      "Read(C:\\Users\\Ravva\\Digital-Birthday-Reminder/**)",
+      "Edit(C:\\Users\\Ravva\\Digital-Birthday-Reminder/**)"
+    ]
+  },
+  "memoryImport": {},
+  "monitoring": {}
+}

@@ -255,21 +255,21 @@ export default function TelegramSettingsForm({
   }
 
   return (
-    <div className="max-w-2xl mx-auto bg-card dark:bg-gray-800 p-6 rounded-lg border shadow-sm">
+    <div className="max-w-2xl mx-auto bg-card p-6 rounded-lg border shadow-sm">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="bg-blue-50 dark:bg-blue-950/40 p-4 rounded-md mb-6">
-            <h3 className="font-medium text-blue-800 dark:text-blue-300 mb-2">
+          <div className="bg-blue-50 p-4 rounded-md mb-6">
+            <h3 className="font-medium text-blue-800 mb-2">
               Как настроить интеграцию с Telegram:
             </h3>
-            <ol className="list-decimal pl-5 text-sm text-blue-700 dark:text-blue-300 space-y-2">
+            <ol className="list-decimal pl-5 text-sm text-blue-700 space-y-2">
               <li>
                 Начните чат с{" "}
                 <a
                   href="https://t.me/BotFather"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline text-blue-600 dark:text-blue-300"
+                  className="underline text-blue-600"
                 >
                   @BotFather
                 </a>{" "}
@@ -290,7 +290,7 @@ export default function TelegramSettingsForm({
                   href="https://t.me/userinfobot"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline text-blue-600 dark:text-blue-300"
+                  className="underline text-blue-600"
                 >
                   @userinfobot
                 </a>{" "}
@@ -531,8 +531,8 @@ export default function TelegramSettingsForm({
               Так будет выглядеть ваше сообщение в Telegram:
             </DialogDescription>
           </DialogHeader>
-          <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-md mt-2 mb-4">
-            <p className="whitespace-pre-wrap dark:text-gray-100">{previewMessage}</p>
+          <div className="bg-gray-100 p-4 rounded-md mt-2 mb-4">
+            <p className="whitespace-pre-wrap">{previewMessage}</p>
           </div>
           <div className="flex justify-end">
             <Button

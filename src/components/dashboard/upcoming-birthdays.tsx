@@ -57,6 +57,8 @@ export function UpcomingBirthdays({ contacts = [], daysAhead = 30 }: UpcomingBir
       }))
       .filter(contact => contact.daysUntil <= daysAhead)
       .sort((a, b) => a.daysUntil - b.daysUntil)
+      // Ограничиваем до 5 ближайших дней рождения
+      .slice(0, 5)
 
     setUpcomingBirthdays(contactsWithDays)
   }, [contacts, daysAhead])
@@ -88,48 +90,38 @@ export function UpcomingBirthdays({ contacts = [], daysAhead = 30 }: UpcomingBir
   }
 
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-border/80 dark:border-border/30">
-      <CardHeader>
-        <CardTitle>Ближайшие дни рождения</CardTitle>
-        <CardDescription>
-          Дни рождения в ближайшие {daysAhead} дней
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-[400px] pr-4">
-          {upcomingBirthdays.length > 0 ? (
-            <div className="space-y-6">
-              {upcomingBirthdays.map(contact => (
-                <div key={contact.id} className="flex items-center">
-                  <Avatar className="h-9 w-9 border border-border/50">
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      {contact.name.split(" ").map(n => n[0]).join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="ml-4 space-y-1">
-                    <p className="text-sm font-medium leading-none">{contact.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(contact.birth_date).toLocaleDateString("ru-RU", {
-                        day: "numeric",
-                        month: "long"
-                      })}
-                    </p>
-                  </div>
-                  <div className="ml-auto">
-                    <Badge variant={getBadgeVariant(contact.daysUntil)}>
-                      {getDaysText(contact.daysUntil)}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
+    <ScrollArea className="h-[300px] pr-4">
+      {upcomingBirthdays.length > 0 ? (
+        <div className="space-y-6">
+          {upcomingBirthdays.map(contact => (
+            <div key={contact.id} className="flex items-center">
+              <Avatar className="h-9 w-9 border border-border/50">
+                <AvatarFallback className="bg-primary/10 text-primary">
+                  {contact.name.split(" ").map(n => n[0]).join("")}
+                </AvatarFallback>
+              </Avatar>
+              <div className="ml-4 space-y-1">
+                <p className="text-sm font-medium leading-none">{contact.name}</p>
+                <p className="text-sm text-muted-foreground">
+                  {new Date(contact.birth_date).toLocaleDateString("ru-RU", {
+                    day: "numeric",
+                    month: "long"
+                  })}
+                </p>
+              </div>
+              <div className="ml-auto">
+                <Badge variant={getBadgeVariant(contact.daysUntil)}>
+                  {getDaysText(contact.daysUntil)}
+                </Badge>
+              </div>
             </div>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              Нет предстоящих дней рождения в ближайшие {daysAhead} дней
-            </div>
-          )}
-        </ScrollArea>
-      </CardContent>
-    </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-8 text-muted-foreground">
+          Нет предстоящих дней рождения в ближайшие {daysAhead} дней
+        </div>
+      )}
+    </ScrollArea>
   )
 }
