@@ -2,7 +2,7 @@ import DashboardNavigation from "@/components/dashboard/navigation";
 import { AuthCheck } from "@/components/auth/auth-check";
 import { redirect } from "next/navigation";
 import { createClient } from "../../../supabase/server";
-import { ThemeToggleButton } from "@/components/theme-toggle-button";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default async function DashboardLayout({
   children,
@@ -28,11 +28,13 @@ export default async function DashboardLayout({
               <div className="flex items-center h-16">
                 <img src="/cake.svg" alt="Logo" className="h-8 mr-8" />
                 <DashboardNavigation />
+                <div className="ml-auto">
+                  <ModeToggle />
+                </div>
               </div>
             </div>
           </header>
           <main className="container mx-auto px-4 py-8">{children}</main>
-          <ThemeToggleButton />
         </div>
       </div>
     </AuthCheck>
