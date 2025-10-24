@@ -1,15 +1,22 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
-import { DayPicker } from "react-day-picker"
+import * as React from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
+import { DayPicker } from "react-day-picker";
 
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
-export type YearNavigationCalendarProps = React.ComponentProps<typeof DayPicker> & {
+export type YearNavigationCalendarProps = React.ComponentProps<
+  typeof DayPicker
+> & {
   onYearChange?: (year: number) => void;
-}
+};
 
 function YearNavigationCalendar({
   className,
@@ -23,12 +30,12 @@ function YearNavigationCalendar({
     if (props.defaultMonth instanceof Date) {
       return props.defaultMonth;
     }
-    
+
     // Проверяем selected
     if (props.selected instanceof Date) {
       return props.selected;
     }
-    
+
     // Проверяем массив selected
     if (Array.isArray(props.selected) && props.selected.length > 0) {
       const firstDate = props.selected[0];
@@ -36,7 +43,7 @@ function YearNavigationCalendar({
         return firstDate;
       }
     }
-    
+
     // По умолчанию используем текущую дату
     return new Date();
   });
@@ -83,7 +90,7 @@ function YearNavigationCalendar({
           onClick={handlePreviousYear}
           className={cn(
             buttonVariants({ variant: "outline" }),
-            "h-6 w-6 bg-card/80 p-0 opacity-70 hover:opacity-100 border-border/50 hover:bg-card"
+            "h-6 w-6 bg-card/80 p-0 opacity-70 hover:opacity-100 border-border/50 hover:bg-card",
           )}
           title="Предыдущий год"
         >
@@ -96,7 +103,7 @@ function YearNavigationCalendar({
           onClick={handleNextYear}
           className={cn(
             buttonVariants({ variant: "outline" }),
-            "h-6 w-6 bg-card/80 p-0 opacity-70 hover:opacity-100 border-border/50 hover:bg-card"
+            "h-6 w-6 bg-card/80 p-0 opacity-70 hover:opacity-100 border-border/50 hover:bg-card",
           )}
           title="Следующий год"
         >
@@ -114,11 +121,12 @@ function YearNavigationCalendar({
           months: "flex flex-col space-y-2 overflow-x-hidden",
           month: "space-y-2 overflow-x-hidden",
           caption: "flex justify-center pt-1 pb-1 relative items-center",
-          caption_label: "text-xs font-medium px-2 py-1 bg-card/80 rounded border border-border/50",
+          caption_label:
+            "text-xs font-medium px-2 py-1 bg-card/80 rounded border border-border/50",
           nav: "space-x-1 flex items-center",
           nav_button: cn(
             buttonVariants({ variant: "outline" }),
-            "h-6 w-6 bg-card/80 p-0 opacity-70 hover:opacity-100 border-border/50 hover:bg-card"
+            "h-6 w-6 bg-card/80 p-0 opacity-70 hover:opacity-100 border-border/50 hover:bg-card",
           ),
           nav_button_previous: "absolute left-1",
           nav_button_next: "absolute right-1",
@@ -130,12 +138,13 @@ function YearNavigationCalendar({
           cell: "h-7 w-7 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
           day: cn(
             buttonVariants({ variant: "ghost" }),
-            "h-7 w-7 p-0 font-medium aria-selected:opacity-100 hover:bg-card/80 rounded-md text-xs"
+            "h-7 w-7 p-0 font-medium aria-selected:opacity-100 hover:bg-card/80 rounded-md text-xs",
           ),
           day_range_end: "day-range-end",
           day_selected:
             "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground font-bold rounded-md",
-          day_today: "bg-accent/50 text-accent-foreground font-bold border border-accent/50 rounded-md",
+          day_today:
+            "bg-accent/50 text-accent-foreground font-bold border border-accent/50 rounded-md",
           day_outside:
             "day-outside text-muted-foreground opacity-selected:bg-accent/50 aria-selected:text-muted-foreground",
           day_disabled: "text-muted-foreground opacity-50",
@@ -145,14 +154,18 @@ function YearNavigationCalendar({
           ...classNames,
         }}
         components={{
-          IconLeft: ({ ...props }) => <ChevronLeft className="h-3 w-3" {...props} />,
-          IconRight: ({ ...props }) => <ChevronRight className="h-3 w-3" {...props} />
+          IconLeft: ({ ...props }) => (
+            <ChevronLeft className="h-3 w-3" {...props} />
+          ),
+          IconRight: ({ ...props }) => (
+            <ChevronRight className="h-3 w-3" {...props} />
+          ),
         }}
         {...props}
       />
     </div>
-  )
+  );
 }
-YearNavigationCalendar.displayName = "YearNavigationCalendar"
+YearNavigationCalendar.displayName = "YearNavigationCalendar";
 
-export { YearNavigationCalendar }
+export { YearNavigationCalendar };

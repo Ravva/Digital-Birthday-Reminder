@@ -6,7 +6,7 @@ import { createClient } from "../../../supabase/client";
 import { useRouter } from "next/navigation";
 import { Upload, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Workbook } from 'exceljs';
+import { Workbook } from "exceljs";
 
 interface ContactImportProps {
   userId: string;
@@ -37,7 +37,7 @@ export default function ContactImport({ userId }: ContactImportProps) {
         const result: { name: string; birth_date: string }[] = [];
         const workbook = new Workbook();
 
-        if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+        if (file.name.endsWith(".xlsx") || file.name.endsWith(".xls")) {
           // Handle Excel file
           const buffer = await file.arrayBuffer();
           await workbook.xlsx.load(buffer);
@@ -46,17 +46,21 @@ export default function ContactImport({ userId }: ContactImportProps) {
           const worksheet = workbook.worksheets[0];
 
           if (!worksheet) {
-            throw new Error('No worksheet found');
+            throw new Error("No worksheet found");
           }
 
           // Determine if first row is header
           const firstRow = worksheet.getRow(1);
-          const hasHeader = firstRow.values && Array.isArray(firstRow.values) &&
-            firstRow.values.some(cell =>
-              cell && typeof cell === 'string' &&
-              (cell.toLowerCase().includes('surname') ||
-               cell.toLowerCase().includes('name') ||
-               cell.toLowerCase().includes('birth'))
+          const hasHeader =
+            firstRow.values &&
+            Array.isArray(firstRow.values) &&
+            firstRow.values.some(
+              (cell) =>
+                cell &&
+                typeof cell === "string" &&
+                (cell.toLowerCase().includes("surname") ||
+                  cell.toLowerCase().includes("name") ||
+                  cell.toLowerCase().includes("birth")),
             );
 
           const startRow = hasHeader ? 2 : 1;
@@ -68,18 +72,18 @@ export default function ContactImport({ userId }: ContactImportProps) {
             if (!values || values.length < 3) return;
 
             // Handle the new name format: Lastname Firstname Patronymic
-            const fullName = String(values[1] || '').trim();
-            let surname = '';
-            let firstName = '';
-            
+            const fullName = String(values[1] || "").trim();
+            let surname = "";
+            let firstName = "";
+
             if (fullName) {
-              const nameParts = fullName.split(' ');
+              const nameParts = fullName.split(" ");
               if (nameParts.length >= 1) {
                 surname = nameParts[0]; // First part is surname
               }
               if (nameParts.length >= 2) {
                 // Combine remaining parts as first name (including patronymic)
-                firstName = nameParts.slice(1).join(' ');
+                firstName = nameParts.slice(1).join(" ");
               }
             }
 
@@ -88,30 +92,38 @@ export default function ContactImport({ userId }: ContactImportProps) {
             const birthDateValue = values[2];
             if (birthDateValue instanceof Date) {
               birthDate = birthDateValue;
-            } else if (typeof birthDateValue === 'string' && birthDateValue.includes('.')) {
-              const [day, month, year] = birthDateValue.split('.').map(Number);
+            } else if (
+              typeof birthDateValue === "string" &&
+              birthDateValue.includes(".")
+            ) {
+              const [day, month, year] = birthDateValue.split(".").map(Number);
               if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
                 birthDate = new Date(year, month - 1, day, 12);
               }
             }
 
-            if (surname && firstName && birthDate && !isNaN(birthDate.getTime())) {
+            if (
+              surname &&
+              firstName &&
+              birthDate &&
+              !isNaN(birthDate.getTime())
+            ) {
               // Store in format: Lastname Firstname Patronymic (as expected by the display functions)
               result.push({
                 name: `${surname} ${firstName}`,
-                birth_date: birthDate.toISOString().split('T')[0],
+                birth_date: birthDate.toISOString().split("T")[0],
               });
             }
           });
-
         } else {
           // Handle CSV file
           const text = await file.text();
-          const lines = text.split('\n');
+          const lines = text.split("\n");
 
-          const hasHeader = lines[0].toLowerCase().includes('surname') ||
-                          lines[0].toLowerCase().includes('name') ||
-                          lines[0].toLowerCase().includes('birth');
+          const hasHeader =
+            lines[0].toLowerCase().includes("surname") ||
+            lines[0].toLowerCase().includes("name") ||
+            lines[0].toLowerCase().includes("birth");
 
           const startRow = hasHeader ? 1 : 0;
 
@@ -119,40 +131,45 @@ export default function ContactImport({ userId }: ContactImportProps) {
             const line = lines[i].trim();
             if (!line) continue;
 
-            const columns = line.split(',');
+            const columns = line.split(",");
             if (columns.length < 3) continue;
 
             // Handle the new name format: Lastname Firstname Patronymic
             const fullName = columns[0].trim();
-            let surname = '';
-            let firstName = '';
-            
+            let surname = "";
+            let firstName = "";
+
             if (fullName) {
-              const nameParts = fullName.split(' ');
+              const nameParts = fullName.split(" ");
               if (nameParts.length >= 1) {
                 surname = nameParts[0]; // First part is surname
               }
               if (nameParts.length >= 2) {
                 // Combine remaining parts as first name (including patronymic)
-                firstName = nameParts.slice(1).join(' ');
+                firstName = nameParts.slice(1).join(" ");
               }
             }
 
             const birthDateStr = columns[1].trim();
 
             let birthDate: Date | null = null;
-            if (birthDateStr.includes('.')) {
-              const [day, month, year] = birthDateStr.split('.').map(Number);
+            if (birthDateStr.includes(".")) {
+              const [day, month, year] = birthDateStr.split(".").map(Number);
               if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
                 birthDate = new Date(year, month - 1, day, 12);
               }
             }
 
-            if (surname && firstName && birthDate && !isNaN(birthDate.getTime())) {
+            if (
+              surname &&
+              firstName &&
+              birthDate &&
+              !isNaN(birthDate.getTime())
+            ) {
               // Store in format: Lastname Firstname Patronymic (as expected by the display functions)
               result.push({
                 name: `${surname} ${firstName}`,
-                birth_date: birthDate.toISOString().split('T')[0],
+                birth_date: birthDate.toISOString().split("T")[0],
               });
             }
           }
@@ -160,7 +177,7 @@ export default function ContactImport({ userId }: ContactImportProps) {
 
         resolve(result);
       } catch (error) {
-        console.error('Error parsing file:', error);
+        console.error("Error parsing file:", error);
         reject(error);
       }
     });
@@ -221,7 +238,8 @@ export default function ContactImport({ userId }: ContactImportProps) {
       console.error("Error processing file:", error);
       setResult({
         success: false,
-        message: "Error processing file. Please make sure it's a valid Excel or CSV file with the correct format.",
+        message:
+          "Error processing file. Please make sure it's a valid Excel or CSV file with the correct format.",
       });
     } finally {
       setIsUploading(false);
@@ -239,7 +257,10 @@ export default function ContactImport({ userId }: ContactImportProps) {
           дд.мм.гггг).
         </p>
         <p className="text-sm text-muted-foreground mb-4">
-          Пример: <code className="bg-card px-1.5 py-0.5 rounded border border-border/30">Иванов Иван Иванович,01.05.1990</code>
+          Пример:{" "}
+          <code className="bg-card px-1.5 py-0.5 rounded border border-border/30">
+            Иванов Иван Иванович,01.05.1990
+          </code>
         </p>
       </div>
 
@@ -276,9 +297,10 @@ export default function ContactImport({ userId }: ContactImportProps) {
       {result && (
         <Alert
           variant={result.success ? "default" : "destructive"}
-          className={result.success ?
-            "bg-[#30D158]/10 border-[#30D158]/30 text-[#30D158]" :
-            "bg-[#FF453A]/10 border-[#FF453A]/30 text-[#FF453A]"
+          className={
+            result.success
+              ? "bg-[#30D158]/10 border-[#30D158]/30 text-[#30D158]"
+              : "bg-[#FF453A]/10 border-[#FF453A]/30 text-[#FF453A]"
           }
         >
           <div className="flex items-center gap-2">
@@ -287,11 +309,13 @@ export default function ContactImport({ userId }: ContactImportProps) {
             ) : (
               <AlertCircle className="w-4 h-4" />
             )}
-            <AlertTitle>
-              {result.success ? "Успешно" : "Ошибка"}
-            </AlertTitle>
+            <AlertTitle>{result.success ? "Успешно" : "Ошибка"}</AlertTitle>
           </div>
-          <AlertDescription className={result.success ? "text-[#30D158]/90" : "text-[#FF453A]/90"}>
+          <AlertDescription
+            className={
+              result.success ? "text-[#30D158]/90" : "text-[#FF453A]/90"
+            }
+          >
             {result.message}
           </AlertDescription>
         </Alert>

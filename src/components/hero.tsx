@@ -22,8 +22,9 @@ export default function Hero() {
             </h1>
 
             <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Автоматические напоминания о днях рождения отправляются прямо в ваш Telegram. 
-              Отслеживайте важные даты и никогда не упускайте возможность поздравить близких.
+              Автоматические напоминания о днях рождения отправляются прямо в
+              ваш Telegram. Отслеживайте важные даты и никогда не упускайте
+              возможность поздравить близких.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

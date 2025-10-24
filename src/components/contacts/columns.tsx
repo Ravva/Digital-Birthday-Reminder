@@ -32,18 +32,18 @@ const splitName = (fullName: string) => {
 // Функция для отображения фамилии и имени (универсальная для разных форматов)
 const displayLastNameFirst = (fullName: string) => {
   const parts = fullName.trim().split(" ");
-  
+
   // Если только одно слово, возвращаем как есть
   if (parts.length < 2) {
     return fullName;
   }
-  
+
   // Простой подход: предполагаем, что новый формат уже правильный (Фамилия Имя Отчество)
   // А старый формат был (Имя Фамилия) или (Имя Отчество Фамилия)
   // Проверяем по количеству частей:
   // 2 части: скорее всего Имя Фамилия -> меняем на Фамилия Имя
   // 3 и более частей: предполагаем, что это уже Фамилия Имя Отчество
-  
+
   if (parts.length === 2) {
     // Старый формат: Имя Фамилия -> меняем на Фамилия Имя
     return `${parts[1]} ${parts[0]}`;
@@ -133,18 +133,20 @@ export const columns: ColumnDef<Tables<"contacts">>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="font-medium">{displayLastNameFirst(row.getValue("name"))}</div>
+      <div className="font-medium">
+        {displayLastNameFirst(row.getValue("name"))}
+      </div>
     ),
     sortingFn: (rowA, rowB, columnId) => {
       // Сортировка по фамилии
       const nameA = rowA.getValue(columnId) as string;
       const nameB = rowB.getValue(columnId) as string;
-      
+
       // Определяем фамилию для обоих форматов
       const getLastName = (fullName: string) => {
         const parts = fullName.trim().split(" ");
         if (parts.length < 2) return fullName;
-        
+
         // Если 2 части: Имя Фамилия -> фамилия вторая
         // Если 3+ части: Фамилия Имя Отчество -> фамилия первая
         if (parts.length === 2) {
@@ -153,10 +155,10 @@ export const columns: ColumnDef<Tables<"contacts">>[] = [
           return parts[0]; // первая часть - фамилия
         }
       };
-      
+
       const lastNameA = getLastName(nameA);
       const lastNameB = getLastName(nameB);
-      
+
       return lastNameA.localeCompare(lastNameB, "ru");
     },
   },
@@ -175,7 +177,15 @@ export const columns: ColumnDef<Tables<"contacts">>[] = [
     },
     cell: ({ row }) => {
       const birthDate = new Date(row.getValue("birth_date"));
-      return <div>{birthDate.toLocaleDateString("ru-RU", { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>;
+      return (
+        <div>
+          {birthDate.toLocaleDateString("ru-RU", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })}
+        </div>
+      );
     },
     sortingFn: (rowA, rowB, columnId) => {
       // For birth_date, sort by full date including year

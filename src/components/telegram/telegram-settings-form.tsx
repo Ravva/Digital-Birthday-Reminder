@@ -81,7 +81,9 @@ export default function TelegramSettingsForm({
     defaultValues: {
       chat_id: settings?.chat_id || "",
       bot_token: settings?.bot_token || "", // This will convert null to empty string
-      notification_time: formatTimeForInput(settings?.notification_time ?? undefined),
+      notification_time: formatTimeForInput(
+        settings?.notification_time ?? undefined,
+      ),
       timezone: settings?.timezone || "GMT+3",
       days_before: settings?.days_before ?? 0,
       message_template:
@@ -102,7 +104,7 @@ export default function TelegramSettingsForm({
         message_template: string;
         is_active: boolean;
         updated_at: string;
-        timezone?: string;  // Make timezone optional
+        timezone?: string; // Make timezone optional
       };
 
       // Create the updateData object with the correct type

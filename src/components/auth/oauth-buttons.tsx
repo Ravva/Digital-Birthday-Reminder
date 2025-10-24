@@ -14,12 +14,12 @@ export function OAuthButtons() {
       setIsGoogleLoading(true);
       const supabase = createClient();
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
           queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
+            access_type: "offline",
+            prompt: "consent",
           },
         },
       });
@@ -39,7 +39,7 @@ export function OAuthButtons() {
       setIsGithubLoading(true);
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
+        provider: "github",
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
         },

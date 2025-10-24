@@ -10,8 +10,8 @@ const inter = Inter({
   subsets: ["latin", "cyrillic"],
   weight: ["400", "500", "600", "700"],
   preload: true,
-  display: 'swap',
-  variable: '--font-inter'
+  display: "swap",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {

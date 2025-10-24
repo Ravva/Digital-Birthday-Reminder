@@ -23,19 +23,27 @@ export default async function SignUp(props: {
 
   return (
     <section className="flex min-h-screen bg-zinc-50 px-4 py-16 md:py-32">
-      <form 
-        className="bg-card m-auto h-fit w-full max-w-sm rounded-[calc(var(--radius)+.125rem)] border p-0.5 shadow-md"
-      >
+      <form className="bg-card m-auto h-fit w-full max-w-sm rounded-[calc(var(--radius)+.125rem)] border p-0.5 shadow-md">
         <div className="p-8 pb-6">
           <div>
             <div className="relative flex items-center justify-center">
               <Link href="/" aria-label="go home" className="absolute left-0">
-                <img src="/cake.svg" alt="Digital Birthday Reminder" className="h-10" />
+                <img
+                  src="/cake.svg"
+                  alt="Digital Birthday Reminder"
+                  className="h-10"
+                />
               </Link>
-              <span className="text-title text-xl font-semibold">Birthday Reminder</span>
+              <span className="text-title text-xl font-semibold">
+                Birthday Reminder
+              </span>
             </div>
-            <h1 className="text-title mb-1 mt-4 text-xl font-semibold text-center">Создать аккаунт</h1>
-            <p className="text-sm text-center">Добро пожаловать! Создайте аккаунт, чтобы начать</p>
+            <h1 className="text-title mb-1 mt-4 text-xl font-semibold text-center">
+              Создать аккаунт
+            </h1>
+            <p className="text-sm text-center">
+              Добро пожаловать! Создайте аккаунт, чтобы начать
+            </p>
           </div>
 
           <div className="mt-6">
@@ -49,10 +57,10 @@ export default async function SignUp(props: {
               <Label htmlFor="full_name" className="block text-sm">
                 Полное имя
               </Label>
-              <Input 
-                type="text" 
-                required 
-                name="full_name" 
+              <Input
+                type="text"
+                required
+                name="full_name"
                 id="full_name"
                 placeholder="Иван Иванов"
               />
@@ -62,10 +70,10 @@ export default async function SignUp(props: {
               <Label htmlFor="email" className="block text-sm">
                 Email
               </Label>
-              <Input 
-                type="email" 
-                required 
-                name="email" 
+              <Input
+                type="email"
+                required
+                name="email"
                 id="email"
                 placeholder="you@example.com"
               />
@@ -75,10 +83,10 @@ export default async function SignUp(props: {
               <Label htmlFor="password" className="text-sm">
                 Пароль
               </Label>
-              <Input 
-                type="password" 
-                required 
-                name="password" 
+              <Input
+                type="password"
+                required
+                name="password"
                 id="password"
                 placeholder="Ваш пароль"
                 minLength={6}

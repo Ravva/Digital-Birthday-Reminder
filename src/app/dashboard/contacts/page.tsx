@@ -51,7 +51,10 @@ export default async function ContactsPage() {
             <TabsTrigger value="import">Импорт контактов</TabsTrigger>
           </TabsList>
           <TabsContent value="list">
-            <DataTable columns={columns} data={contacts as Tables<"contacts">[]} />
+            <DataTable
+              columns={columns}
+              data={contacts as Tables<"contacts">[]}
+            />
           </TabsContent>
           <TabsContent value="import">
             <ContactImport userId={user.id} />

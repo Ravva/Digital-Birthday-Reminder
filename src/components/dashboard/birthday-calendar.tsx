@@ -1,78 +1,88 @@
-"use client"
+"use client";
 
-import { Tables } from "@/types/supabase"
-import { Calendar } from "@/components/ui/calendar"
-import { useEffect, useState } from "react"
-import { ru } from "date-fns/locale"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { Tables } from "@/types/supabase";
+import { Calendar } from "@/components/ui/calendar";
+import { useEffect, useState } from "react";
+import { ru } from "date-fns/locale";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface BirthdayCalendarProps {
-  contacts?: Tables<"contacts">[]
+  contacts?: Tables<"contacts">[];
 }
 
 export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
-  const [date, setDate] = useState<Date | undefined>(new Date())
-  const [birthdays, setBirthdays] = useState<Record<string, Tables<"contacts">[]>>({})
-  const [selectedDayContacts, setSelectedDayContacts] = useState<Tables<"contacts">[]>([])
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [birthdays, setBirthdays] = useState<
+    Record<string, Tables<"contacts">[]>
+  >({});
+  const [selectedDayContacts, setSelectedDayContacts] = useState<
+    Tables<"contacts">[]
+  >([]);
 
   // Функция для форматирования даты в строку "YYYY-MM-DD"
   const formatDateKey = (date: Date): string => {
-    return `${date.getMonth() + 1}-${date.getDate()}`
-  }
+    return `${date.getMonth() + 1}-${date.getDate()}`;
+  };
 
   useEffect(() => {
     if (contacts.length === 0) {
-      setBirthdays({})
-      return
+      setBirthdays({});
+      return;
     }
 
     // Группируем контакты по дате рождения (месяц-день)
-    const birthdayMap: Record<string, Tables<"contacts">[]> = {}
+    const birthdayMap: Record<string, Tables<"contacts">[]> = {};
 
-    contacts.forEach(contact => {
-      const birthDate = new Date(contact.birth_date)
-      const key = formatDateKey(birthDate)
+    contacts.forEach((contact) => {
+      const birthDate = new Date(contact.birth_date);
+      const key = formatDateKey(birthDate);
 
       if (!birthdayMap[key]) {
-        birthdayMap[key] = []
+        birthdayMap[key] = [];
       }
 
-      birthdayMap[key].push(contact)
-    })
+      birthdayMap[key].push(contact);
+    });
 
-    setBirthdays(birthdayMap)
+    setBirthdays(birthdayMap);
 
     // Обновляем список контактов для выбранного дня
     if (date) {
-      const key = formatDateKey(date)
-      setSelectedDayContacts(birthdayMap[key] || [])
+      const key = formatDateKey(date);
+      setSelectedDayContacts(birthdayMap[key] || []);
     }
-  }, [contacts, date])
+  }, [contacts, date]);
 
   // Функция для определения, есть ли дни рождения в указанный день
   const hasBirthday = (day: Date): boolean => {
-    const key = formatDateKey(day)
-    return !!birthdays[key] && birthdays[key].length > 0
-  }
+    const key = formatDateKey(day);
+    return !!birthdays[key] && birthdays[key].length > 0;
+  };
 
   // Функция для отображения дней с днями рождения
   const dayClassName = (day: Date) => {
-    return hasBirthday(day) ? "bg-primary/10 rounded-md" : ""
-  }
+    return hasBirthday(day) ? "bg-primary/10 rounded-md" : "";
+  };
 
   // Обработчик выбора даты
   const handleSelect = (selectedDate: Date | undefined) => {
-    setDate(selectedDate)
+    setDate(selectedDate);
 
     if (selectedDate) {
-      const key = formatDateKey(selectedDate)
-      setSelectedDayContacts(birthdays[key] || [])
+      const key = formatDateKey(selectedDate);
+      setSelectedDayContacts(birthdays[key] || []);
     } else {
-      setSelectedDayContacts([])
+      setSelectedDayContacts([]);
     }
-  }
+  };
 
   // Функция для расчета возраста
   const calculateAge = (birthDateStr: string): number => {
@@ -82,12 +92,15 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
 
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
       age--;
     }
 
     return age;
-  }
+  };
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -106,10 +119,10 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
             locale={ru}
             className="rounded-md border"
             modifiers={{
-              birthday: (date) => hasBirthday(date)
+              birthday: (date) => hasBirthday(date),
             }}
             modifiersClassNames={{
-              birthday: "bg-primary/10 font-bold"
+              birthday: "bg-primary/10 font-bold",
             }}
             components={{
               DayContent: (props) => (
@@ -119,7 +132,7 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
                     <div className="w-1 h-1 bg-primary rounded-full mx-auto mt-1"></div>
                   )}
                 </div>
-              )
+              ),
             }}
           />
         </CardContent>
@@ -130,7 +143,11 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
           <CardTitle>
             {date ? (
               <>
-                Дни рождения {date.toLocaleDateString("ru-RU", { day: "numeric", month: "long" })}
+                Дни рождения{" "}
+                {date.toLocaleDateString("ru-RU", {
+                  day: "numeric",
+                  month: "long",
+                })}
               </>
             ) : (
               "Выберите дату"
@@ -145,15 +162,21 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
         <CardContent>
           <ScrollArea className="h-[300px]">
             <div className="space-y-4">
-              {selectedDayContacts.map(contact => (
-                <div key={contact.id} className="flex items-center justify-between border-b pb-2">
+              {selectedDayContacts.map((contact) => (
+                <div
+                  key={contact.id}
+                  className="flex items-center justify-between border-b pb-2"
+                >
                   <div>
                     <p className="font-medium">{contact.name}</p>
                     <p className="text-sm text-muted-foreground">
                       {calculateAge(contact.birth_date)} лет
                     </p>
                   </div>
-                  <Badge variant="outline" className="border-border/30 bg-card/80">
+                  <Badge
+                    variant="outline"
+                    className="border-border/30 bg-card/80"
+                  >
                     {new Date(contact.birth_date).getFullYear()}
                   </Badge>
                 </div>
@@ -163,5 +186,5 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
