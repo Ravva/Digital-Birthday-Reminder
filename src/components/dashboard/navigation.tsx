@@ -2,22 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
 import { Inbox, Users, MessageCircle, LogOut } from "lucide-react";
 import { createClient } from "../../../supabase/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-
-const navigationMenuTriggerStyle = cn(
-  "group inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50",
-);
+import { Button } from "@/components/ui/button";
 
 export default function DashboardNavigation() {
   const pathname = usePathname();
@@ -29,46 +18,55 @@ export default function DashboardNavigation() {
     router.push("/sign-in");
   };
 
+  const links = [
+    {
+      href: "/dashboard",
+      label: "Панель",
+      icon: Inbox,
+      active: pathname === "/dashboard",
+    },
+    {
+      href: "/dashboard/contacts",
+      label: "Контакты",
+      icon: Users,
+      active: pathname?.startsWith("/dashboard/contacts"),
+    },
+    {
+      href: "/dashboard/telegram",
+      label: "Telegram",
+      icon: MessageCircle,
+      active: pathname === "/dashboard/telegram",
+    },
+  ];
+
   return (
-    <NavigationMenu className="max-w-none">
-      <NavigationMenuList className="space-x-2">
-        <NavigationMenuItem>
-          <Link href="/dashboard" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle}>
-              <Inbox className="mr-2 h-4 w-4" />
-              Панель управления
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <Link href="/dashboard/contacts" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle}>
-              <Users className="mr-2 h-4 w-4" />
-              Контакты
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <Link href="/dashboard/telegram" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle}>
-              <MessageCircle className="mr-2 h-4 w-4" />
-              Настройки Telegram
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <button
-            onClick={handleSignOut}
-            className={cn(navigationMenuTriggerStyle, "cursor-pointer")}
+    <nav className="flex items-center gap-1">
+      {links.map((link) => (
+        <Link key={link.href} href={link.href}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={cn(
+              "gap-2 text-muted-foreground hover:text-foreground transition-colors",
+              link.active &&
+              "bg-accent text-foreground shadow-sm",
+            )}
           >
-            <LogOut className="mr-2 h-4 w-4" />
-            Выйти
-          </button>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
+            <link.icon className="h-4 w-4" />
+            <span className="hidden sm:inline-block">{link.label}</span>
+          </Button>
+        </Link>
+      ))}
+      <div className="ml-2 h-6 w-px bg-border" />
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={handleSignOut}
+        className="gap-2 text-muted-foreground hover:text-destructive transition-colors"
+      >
+        <LogOut className="h-4 w-4" />
+        <span className="hidden sm:inline-block">Выйти</span>
+      </Button>
+    </nav>
   );
 }

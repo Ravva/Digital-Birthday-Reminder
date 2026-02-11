@@ -4,10 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-// import { SmtpMessage } from "../smtp-message";
 import { signUpAction } from "@/app/actions";
-import Navbar from "@/components/navbar";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function SignUp(props: {
   searchParams: Promise<Message>;
@@ -22,26 +21,32 @@ export default async function SignUp(props: {
   }
 
   return (
-    <section className="flex min-h-screen bg-zinc-50 px-4 py-16 md:py-32">
-      <form className="bg-card m-auto h-fit w-full max-w-sm rounded-[calc(var(--radius)+.125rem)] border p-0.5 shadow-md">
+    <section className="auth-bg flex px-4 py-16 md:py-32">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      <form className="glass-card m-auto h-fit w-full max-w-sm rounded-xl p-0.5 animate-scale-in">
         <div className="p-8 pb-6">
           <div>
             <div className="relative flex items-center justify-center">
               <Link href="/" aria-label="go home" className="absolute left-0">
-                <img
-                  src="/cake.svg"
-                  alt="Digital Birthday Reminder"
-                  className="h-10"
-                />
+                <div className="flex items-center justify-center h-10 w-10 rounded-lg gradient-bg">
+                  <img
+                    src="/cake.svg"
+                    alt="Digital Birthday Reminder"
+                    className="h-6 brightness-0 invert"
+                  />
+                </div>
               </Link>
-              <span className="text-title text-xl font-semibold">
-                Birthday Reminder
+              <span className="text-xl font-semibold tracking-tight">
+                Birthday
+                <span className="gradient-text ml-1">Reminder</span>
               </span>
             </div>
-            <h1 className="text-title mb-1 mt-4 text-xl font-semibold text-center">
+            <h1 className="mb-1 mt-4 text-xl font-semibold text-center">
               Создать аккаунт
             </h1>
-            <p className="text-sm text-center">
+            <p className="text-sm text-muted-foreground text-center">
               Добро пожаловать! Создайте аккаунт, чтобы начать
             </p>
           </div>
@@ -50,7 +55,7 @@ export default async function SignUp(props: {
             <OAuthButtons />
           </div>
 
-          <hr className="my-4 border-dashed" />
+          <hr className="my-4 border-dashed border-border" />
 
           <div className="space-y-5">
             <div className="space-y-2">
@@ -96,7 +101,7 @@ export default async function SignUp(props: {
             <SubmitButton
               formAction={signUpAction}
               pendingText="Регистрация..."
-              className="w-full"
+              className="w-full gradient-bg text-white hover:opacity-90 transition-opacity border-0"
             >
               Зарегистрироваться
             </SubmitButton>
@@ -105,10 +110,10 @@ export default async function SignUp(props: {
           </div>
         </div>
 
-        <div className="bg-muted rounded-(--radius) border p-3">
-          <p className="text-accent-foreground text-center text-sm">
+        <div className="bg-muted/50 rounded-b-xl border-t border-border/50 p-3">
+          <p className="text-center text-sm text-muted-foreground">
             Уже есть аккаунт?
-            <Button asChild variant="link" className="px-2">
+            <Button asChild variant="link" className="px-2 gradient-text">
               <Link href="/sign-in">Войти</Link>
             </Button>
           </p>
