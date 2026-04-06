@@ -4,6 +4,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test:security": "node --test tests/security/**/*.test.js",
     "lint": "biome lint ./src",
     "lint:fix": "biome lint --fix ./src",
     "format": "biome format --write ./src",
