@@ -2,13 +2,16 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { SupabaseAdapter } from "@auth/supabase-adapter";
+import { getSupabaseServiceRoleKey } from "@/lib/env";
 import type { Adapter } from "next-auth/adapters";
+
+const serviceRoleKey = getSupabaseServiceRoleKey();
 
 if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
   throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable");
 }
 
-if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+if (!serviceRoleKey) {
   throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY environment variable");
 }
 
@@ -39,7 +42,7 @@ const handler = NextAuth({
   ],
   adapter: SupabaseAdapter({
     url: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    secret: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    secret: serviceRoleKey,
   }) as Adapter,
   session: {
     strategy: "jwt",

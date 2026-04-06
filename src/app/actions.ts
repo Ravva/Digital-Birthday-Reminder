@@ -3,6 +3,7 @@
 import { encodedRedirect } from "@/utils/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { createAdminClient } from "../../supabase/admin";
 import { createClient } from "../../supabase/server";
 
 export const signUpAction = async (formData: FormData) => {
@@ -44,7 +45,8 @@ export const signUpAction = async (formData: FormData) => {
 
   if (user) {
     try {
-      const { error: updateError } = await supabase.from("users").insert({
+      const adminSupabase = createAdminClient();
+      const { error: updateError } = await adminSupabase.from("users").insert({
         id: user.id,
         name: fullName,
         full_name: fullName,

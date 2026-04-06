@@ -1,4 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
+import { getSupabaseServiceRoleKey } from "@/lib/env";
+import { getRateLimit } from "@/lib/rate-limit";
 import { NextResponse } from "next/server";
 
 // Add this line to explicitly set the allowed methods
@@ -80,6 +82,38 @@ function isBirthdayToday(birthDateStr: string): boolean {
 
 export async function POST(req: Request) {
   try {
+    const serviceRoleKey = getSupabaseServiceRoleKey();
+
+    if (!serviceRoleKey) {
+      return NextResponse.json(
+        {
+          error: "Missing service role key",
+        },
+        { status: 500 },
+      );
+    }
+
+    const rateLimit = getRateLimit();
+    if (rateLimit) {
+      const forwardedFor = req.headers.get("x-forwarded-for");
+      const identifier = forwardedFor?.split(",")[0]?.trim() || "send-notifications";
+      const { success, limit, remaining, reset } = await rateLimit.limit(identifier);
+
+      if (!success) {
+        return NextResponse.json(
+          { error: "Too Many Requests" },
+          {
+            status: 429,
+            headers: {
+              "X-RateLimit-Limit": limit.toString(),
+              "X-RateLimit-Remaining": remaining.toString(),
+              "X-RateLimit-Reset": reset.toString(),
+            },
+          },
+        );
+      }
+    }
+
     // Get authorization header
     const authHeader = req.headers.get("authorization");
     const supabaseUrl = req.headers.get("x-supabase-url");
@@ -96,7 +130,7 @@ export async function POST(req: Request) {
     if (
       !authHeader ||
       !authHeader.startsWith("Bearer ") ||
-      authHeader.split(" ")[1] !== process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      authHeader.split(" ")[1] !== serviceRoleKey ||
       supabaseUrl !== process.env.NEXT_PUBLIC_SUPABASE_URL
     ) {
       return NextResponse.json(
@@ -120,7 +154,7 @@ export async function POST(req: Request) {
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      serviceRoleKey,
     );
 
     const { data: telegramSettings, error: settingsError } = await supabase
