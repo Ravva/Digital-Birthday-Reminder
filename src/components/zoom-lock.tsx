@@ -12,7 +12,11 @@ export function ZoomLock() {
     const preventZoomKeyboard = (e: KeyboardEvent) => {
       if (
         (e.ctrlKey || e.metaKey) && // Ctrl или Cmd (для Mac)
-        (e.key === "+" || e.key === "-" || e.key === "=" || e.key === "_" || e.key === "0")
+        (e.key === "+" ||
+          e.key === "-" ||
+          e.key === "=" ||
+          e.key === "_" ||
+          e.key === "0")
       ) {
         e.preventDefault();
         return false;
@@ -39,23 +43,26 @@ export function ZoomLock() {
     };
 
     // Добавляем обработчики событий
-    document.addEventListener("keydown", preventZoomKeyboard, { passive: false });
+    document.addEventListener("keydown", preventZoomKeyboard, {
+      passive: false,
+    });
     document.addEventListener("wheel", preventZoomWheel, { passive: false });
-    
+
     // Сбрасываем масштаб при загрузке
     resetZoom();
-    
+
     // Добавляем мета-тег для запрета масштабирования на мобильных устройствах
     const metaViewport = document.querySelector('meta[name="viewport"]');
     if (metaViewport) {
       metaViewport.setAttribute(
-        "content", 
-        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        "content",
+        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
       );
     } else {
       const meta = document.createElement("meta");
       meta.name = "viewport";
-      meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+      meta.content =
+        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
       document.head.appendChild(meta);
     }
 

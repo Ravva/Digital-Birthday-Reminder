@@ -1,8 +1,8 @@
-import { createClient } from '@supabase/supabase-js';
-import { NextResponse } from 'next/server';
+import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
 
 // Add this line to explicitly set the allowed methods
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 interface ApiError {
   message: string;
@@ -71,52 +71,56 @@ function formatBirthdayMessage(
 function isBirthdayToday(birthDateStr: string): boolean {
   const today = new Date();
   const birthDate = new Date(birthDateStr);
-  
-  return today.getMonth() === birthDate.getMonth() && 
-         today.getDate() === birthDate.getDate();
+
+  return (
+    today.getMonth() === birthDate.getMonth() &&
+    today.getDate() === birthDate.getDate()
+  );
 }
 
 export async function POST(req: Request) {
   try {
     // Get authorization header
-    const authHeader = req.headers.get('authorization');
-    const supabaseUrl = req.headers.get('x-supabase-url');
+    const authHeader = req.headers.get("authorization");
+    const supabaseUrl = req.headers.get("x-supabase-url");
 
     // More detailed logging for debugging
-    console.log('Auth check:', {
+    console.log("Auth check:", {
       receivedUrl: supabaseUrl,
       expectedUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
       hasAuthHeader: !!authHeader,
-      headerFormat: authHeader?.startsWith('Bearer ') ? 'correct' : 'incorrect'
+      headerFormat: authHeader?.startsWith("Bearer ") ? "correct" : "incorrect",
     });
 
     // Check if auth header exists and matches
-    if (!authHeader || 
-        !authHeader.startsWith('Bearer ') || 
-        authHeader.split(' ')[1] !== process.env.SUPABASE_SERVICE_ROLE_KEY ||
-        supabaseUrl !== process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    if (
+      !authHeader ||
+      !authHeader.startsWith("Bearer ") ||
+      authHeader.split(" ")[1] !== process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      supabaseUrl !== process.env.NEXT_PUBLIC_SUPABASE_URL
+    ) {
       return NextResponse.json(
-        { 
+        {
           error: "Invalid API key",
-          details: "Authentication failed. Please check your credentials."
+          details: "Authentication failed. Please check your credentials.",
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Get force parameter from URL
     const url = new URL(req.url);
-    const forceCheck = url.searchParams.get('force') === 'true';
-    
-    console.log('Debug info:', {
+    const forceCheck = url.searchParams.get("force") === "true";
+
+    console.log("Debug info:", {
       forceCheck,
       requestUrl: req.url,
-      searchParams: Object.fromEntries(url.searchParams.entries())
+      searchParams: Object.fromEntries(url.searchParams.entries()),
     });
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
     );
 
     const { data: telegramSettings, error: settingsError } = await supabase
@@ -128,14 +132,14 @@ export async function POST(req: Request) {
       console.error("Error fetching telegram settings:", settingsError);
       return NextResponse.json(
         { error: settingsError.message },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     if (!telegramSettings?.length) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         message: "No active telegram settings found",
-        success: true 
+        success: true,
       });
     }
 
@@ -156,54 +160,60 @@ export async function POST(req: Request) {
       }
 
       for (const contact of contacts) {
-        console.log('Processing contact:', {
+        console.log("Processing contact:", {
           name: contact.name,
           birthDate: contact.birth_date,
-          isBirthdayToday: isBirthdayToday(contact.birth_date)
+          isBirthdayToday: isBirthdayToday(contact.birth_date),
         });
 
         if (isBirthdayToday(contact.birth_date)) {
-          console.log('Birthday found for:', contact.name);
+          console.log("Birthday found for:", contact.name);
           birthdaysFound = true;
-          
+
           const message = formatBirthdayMessage(
             settings.message_template,
             contact,
-            0
+            0,
           );
 
           const result = await sendTelegramMessage(
             settings.bot_token,
             settings.chat_id,
-            message
+            message,
           );
 
           if (result.success) {
             notificationsSent = true;
             console.log(`Birthday notification sent for ${contact.name}`);
           } else {
-            console.error(`Failed to send notification for ${contact.name}:`, result.error);
+            console.error(
+              `Failed to send notification for ${contact.name}:`,
+              result.error,
+            );
           }
         }
       }
     }
 
-    return NextResponse.json({ 
-      message: birthdaysFound 
-        ? (notificationsSent ? "Birthday notifications sent!" : "Birthdays found but notifications were not sent") 
+    return NextResponse.json({
+      message: birthdaysFound
+        ? notificationsSent
+          ? "Birthday notifications sent!"
+          : "Birthdays found but notifications were not sent"
         : "No birthdays today",
       success: true,
       birthdaysFound,
-      notificationsSent
+      notificationsSent,
     });
   } catch (error) {
     console.error("Detailed error in birthday notifications:", error);
     return NextResponse.json(
-      { 
-        error: error instanceof Error ? error.message : 'An unknown error occurred',
-        details: error instanceof Error ? error.stack : undefined
+      {
+        error:
+          error instanceof Error ? error.message : "An unknown error occurred",
+        details: error instanceof Error ? error.stack : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -213,9 +223,10 @@ export async function OPTIONS(req: Request) {
   return new NextResponse(null, {
     status: 204,
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-supabase-url',
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST",
+      "Access-Control-Allow-Headers":
+        "Content-Type, Authorization, x-supabase-url",
     },
   });
 }

@@ -21,9 +21,9 @@ const handler = NextAuth({
         params: {
           prompt: "consent",
           access_type: "offline",
-          response_type: "code"
-        }
-      }
+          response_type: "code",
+        },
+      },
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -42,7 +42,7 @@ const handler = NextAuth({
     secret: process.env.SUPABASE_SERVICE_ROLE_KEY,
   }) as Adapter,
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
   },
   callbacks: {
     async session({ session, token, user }) {
@@ -56,7 +56,7 @@ const handler = NextAuth({
         token.sub = user.id;
       }
       return token;
-    }
+    },
   },
   pages: {
     signIn: "/sign-in",

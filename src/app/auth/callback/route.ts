@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    
+
     if (error) {
       console.error("Error exchanging code for session:", error);
       return NextResponse.redirect(new URL("/sign-in", requestUrl.origin));
@@ -18,4 +18,4 @@ export async function GET(request: Request) {
 
   // URL to redirect to after sign in process completes
   return NextResponse.redirect(new URL(next, requestUrl.origin));
-} 
+}

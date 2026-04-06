@@ -81,7 +81,9 @@ export default function TelegramSettingsForm({
     defaultValues: {
       chat_id: settings?.chat_id || "",
       bot_token: settings?.bot_token || "", // This will convert null to empty string
-      notification_time: formatTimeForInput(settings?.notification_time ?? undefined),
+      notification_time: formatTimeForInput(
+        settings?.notification_time ?? undefined,
+      ),
       timezone: settings?.timezone || "GMT+3",
       days_before: settings?.days_before ?? 0,
       message_template:
@@ -102,7 +104,7 @@ export default function TelegramSettingsForm({
         message_template: string;
         is_active: boolean;
         updated_at: string;
-        timezone?: string;  // Make timezone optional
+        timezone?: string; // Make timezone optional
       };
 
       // Create the updateData object with the correct type
@@ -255,21 +257,22 @@ export default function TelegramSettingsForm({
   }
 
   return (
-    <div className="max-w-2xl mx-auto bg-card/80 p-6 rounded-xl border border-border/30 shadow-sm backdrop-blur-sm">
+    <div className="max-w-2xl mx-auto bg-card p-6 rounded-lg border shadow-sm">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="bg-primary/10 p-4 rounded-lg border border-primary/20 mb-6">
-            <h3 className="font-medium text-primary mb-2">
+          <div className="bg-[#0A84FF]/10 p-4 rounded-lg border border-[#0A84FF]/20 mb-6">
+            <h3 className="font-medium text-[#0A84FF] mb-2 flex items-center gap-2 text-sm">
+              <InfoIcon className="h-4 w-4" />
               Как настроить интеграцию с Telegram:
             </h3>
-            <ol className="list-decimal pl-5 text-sm text-primary/90 space-y-2">
+            <ol className="list-decimal pl-5 text-[#0A84FF]/90 space-y-1 ml-2 text-sm">
               <li>
                 Начните чат с{" "}
                 <a
                   href="https://t.me/BotFather"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline text-primary font-medium"
+                  className="underline text-[#0A84FF] hover:text-[#0A84FF]/80 text-sm"
                 >
                   @BotFather
                 </a>{" "}
@@ -290,7 +293,7 @@ export default function TelegramSettingsForm({
                   href="https://t.me/userinfobot"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline text-primary font-medium"
+                  className="underline text-[#0A84FF] hover:text-[#0A84FF]/80 text-sm"
                 >
                   @userinfobot
                 </a>{" "}
@@ -342,7 +345,7 @@ export default function TelegramSettingsForm({
           <div className="flex gap-4">
             <Button
               type="button"
-              variant="outline"
+              variant="default"
               onClick={testConnection}
               disabled={
                 isSubmitting ||
@@ -482,9 +485,8 @@ export default function TelegramSettingsForm({
                   <div className="mt-2">
                     <Button
                       type="button"
-                      variant="outline"
+                      variant="default"
                       onClick={previewMessageTemplate}
-                      className="bg-card/80 text-foreground border-border/30 hover:bg-card"
                     >
                       Проверить сообщение
                     </Button>
@@ -547,8 +549,8 @@ export default function TelegramSettingsForm({
               Так будет выглядеть ваше сообщение в Telegram:
             </DialogDescription>
           </DialogHeader>
-          <div className="bg-gray-100 dark:bg-[#2c2c2e] p-4 rounded-lg border border-gray-200 dark:border-[#38383a] mt-2 mb-4">
-            <p className="whitespace-pre-wrap dark:text-[#f5f5f7]">{previewMessage}</p>
+          <div className="bg-gray-100 p-4 rounded-md mt-2 mb-4">
+            <p className="whitespace-pre-wrap">{previewMessage}</p>
           </div>
           <div className="flex justify-end">
             <Button

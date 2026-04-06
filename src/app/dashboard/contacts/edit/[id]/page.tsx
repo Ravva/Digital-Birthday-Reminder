@@ -12,7 +12,7 @@ export default async function EditContactPage({
   params: Promise<{ id: string }> | { id: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const id = 'then' in params ? (await params).id : params.id;
+  const id = "then" in params ? (await params).id : params.id;
   const supabase = await createClient();
 
   const {

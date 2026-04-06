@@ -3,16 +3,15 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { TempoInit } from "@/components/tempo-init";
-import { ThemeProvider } from "@/components/theme-provider";
 import { ZoomLock } from "@/components/zoom-lock";
+import { ThemeProvider } from "@/components/theme-provider";
 
-// Используем Inter - современный шрифт, похожий на используемый в Apple
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
   weight: ["400", "500", "600", "700"],
   preload: true,
-  display: 'swap',
-  variable: '--font-inter'
+  display: "swap",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -27,18 +26,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" suppressHydrationWarning className={inter.variable}>
-      <head>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-        />
-      </head>
-      <body className={`${inter.className} antialiased`}>
+    <html lang="ru" suppressHydrationWarning>
+      <body className={inter.className}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
         >
           {children}

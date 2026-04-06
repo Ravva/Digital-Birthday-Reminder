@@ -56,7 +56,9 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: contact?.name || "",
-      birth_date: contact?.birth_date ? new Date(contact.birth_date) : undefined,
+      birth_date: contact?.birth_date
+        ? new Date(contact.birth_date)
+        : undefined,
       notes: contact?.notes || "",
     },
   });
@@ -69,7 +71,9 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
       }
 
       // Преобразуем дату в формат YYYY-MM-DD
-      const formattedDate = new Date(values.birth_date).toISOString().split('T')[0];
+      const formattedDate = new Date(values.birth_date)
+        .toISOString()
+        .split("T")[0];
 
       if (contact) {
         // Обновление существующего контакта
@@ -117,12 +121,9 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
     if (date) {
       // Устанавливаем дату в UTC для избежания проблем с часовыми поясами
       // Устанавливаем время на полдень, чтобы избежать проблем с переходом на летнее/зимнее время
-      const utcDate = new Date(Date.UTC(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        12, 0, 0
-      ));
+      const utcDate = new Date(
+        Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0),
+      );
       form.setValue("birth_date", utcDate);
 
       // Закрываем календарь сразу после выбора даты
@@ -133,7 +134,10 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
   return (
     <div className="max-w-2xl mx-auto bg-card/80 p-6 rounded-xl border border-border/30 shadow-sm backdrop-blur-sm overflow-x-hidden">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 overflow-x-hidden">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 overflow-x-hidden"
+        >
           <FormField
             control={form.control}
             name="name"
@@ -164,7 +168,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                         variant={"outline"}
                         className={cn(
                           "w-[200px] pl-3 text-left font-normal bg-card/90 border-border/50 hover:bg-card shadow-sm",
-                          !field.value && "text-muted-foreground"
+                          !field.value && "text-muted-foreground",
                         )}
                       >
                         {field.value ? (
@@ -176,7 +180,11 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-card/95 border-border/50 backdrop-blur-sm shadow-lg max-h-[400px] overflow-y-auto overflow-x-hidden" align="start" sideOffset={5}>
+                  <PopoverContent
+                    className="w-auto p-0 bg-card/95 border-border/50 backdrop-blur-sm shadow-lg max-h-[400px] overflow-y-auto overflow-x-hidden"
+                    align="start"
+                    sideOffset={5}
+                  >
                     <div className="flex flex-col">
                       <div className="p-2 pb-0 flex justify-between items-center">
                         <div className="text-xs font-medium">Выберите дату</div>
@@ -192,7 +200,9 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                       </div>
                       <YearNavigationCalendar
                         mode="single"
-                        selected={field.value instanceof Date ? field.value : undefined}
+                        selected={
+                          field.value instanceof Date ? field.value : undefined
+                        }
                         onSelect={(date) => onDateSelect(date)}
                         disabled={(date: Date) =>
                           date > new Date() || date < new Date("1900-01-01")
@@ -230,11 +240,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
           />
 
           <div className="flex gap-4">
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              variant="default"
-            >
+            <Button type="submit" disabled={isSubmitting} variant="default">
               {isSubmitting
                 ? contact
                   ? "Обновление..."
