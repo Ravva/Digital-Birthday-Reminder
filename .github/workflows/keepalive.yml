@@ -15,5 +15,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Keepalive Action
-        uses: gautamkrishnar/keepalive-workflow@v2
+      - name: Create keepalive commit
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # Создаем пустой коммит для продления активности репозитория
+          git commit --allow-empty -m "chore: keepalive dummy commit"
+          git push origin main
