@@ -16,6 +16,20 @@ import { Tables } from "@/types/supabase";
 import { formatDate } from "@/utils/utils";
 import Link from "next/link";
 import { Edit, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "../../../supabase/client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 // Функция для разделения имени и фамилии (новый формат: Lastname Firstname Patronymic)
 const splitName = (fullName: string) => {
@@ -95,6 +109,70 @@ const calculateAge = (birthDateStr: string): number => {
 
   return age;
 };
+
+function DeleteContactButton({
+  id,
+  name,
+}: {
+  id: string;
+  name: string;
+}) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.from("contacts").delete().eq("id", id);
+
+      if (error) {
+        console.error("Error deleting contact:", error);
+        return;
+      }
+
+      setOpen(false);
+      router.refresh();
+    } catch (error) {
+      console.error("Error deleting contact:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline" size="icon" title="Удалить">
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Удалить контакт?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Вы уверены, что хотите удалить контакт «{name}»? Это действие
+            нельзя отменить.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={isDeleting}>Отмена</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={(e) => {
+              e.preventDefault();
+              handleDelete();
+            }}
+            disabled={isDeleting}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            {isDeleting ? "Удаление..." : "Удалить"}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
 
 export const columns: ColumnDef<Tables<"contacts">>[] = [
   {
@@ -267,9 +345,7 @@ export const columns: ColumnDef<Tables<"contacts">>[] = [
               <Edit className="h-4 w-4" />
             </Button>
           </Link>
-          <Button variant="outline" size="icon">
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <DeleteContactButton id={contact.id} name={contact.name} />
         </div>
       );
     },
