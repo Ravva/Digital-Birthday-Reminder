@@ -1,7 +1,8 @@
 name: Birthday Notifications
 on:
-  schedule:
-    - cron: '0 5 * * *'
+  # Scheduled runs disabled: pg_cron (Supabase job `birthday-notifications-daily`)
+  # is now the primary trigger, firing daily at 08:30 MSK.
+  # Manual runs remain available via workflow_dispatch.
   workflow_dispatch:
 
 jobs:
