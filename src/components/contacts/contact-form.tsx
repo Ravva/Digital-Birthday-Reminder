@@ -1,8 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,21 +11,24 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Tables } from "@/types/supabase";
-import { createClient } from "../../../supabase/client";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { YearNavigationCalendar } from "@/components/ui/year-navigation-calendar";
-import { format } from "date-fns";
-import { ru } from "date-fns/locale";
-import { CalendarIcon } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
+import { YearNavigationCalendar } from "@/components/ui/year-navigation-calendar";
 import { cn } from "@/lib/utils";
+import type { Tables } from "@/types/supabase";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import { ru } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { createClient } from "../../../supabase/client";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -132,7 +132,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-card/80 p-6 rounded-xl border border-border/30 shadow-sm backdrop-blur-sm overflow-x-hidden">
+    <div className="mx-auto max-w-2xl overflow-x-hidden rounded-xl border bg-card p-6 shadow-sm">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -167,7 +167,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-[200px] pl-3 text-left font-normal bg-card/90 border-border/50 hover:bg-card shadow-sm",
+                          "w-[200px] pl-3 text-left font-normal",
                           !field.value && "text-muted-foreground",
                         )}
                       >
@@ -181,7 +181,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent
-                    className="w-auto p-0 bg-card/95 border-border/50 backdrop-blur-sm shadow-lg max-h-[400px] overflow-y-auto overflow-x-hidden"
+                    className="max-h-[400px] w-auto overflow-x-hidden overflow-y-auto p-0 shadow-lg"
                     align="start"
                     sideOffset={5}
                   >
@@ -207,7 +207,6 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
                         disabled={(date: Date) =>
                           date > new Date() || date < new Date("1900-01-01")
                         }
-                        initialFocus
                         locale={ru}
                       />
                     </div>
@@ -253,7 +252,7 @@ export default function ContactForm({ userId, contact }: ContactFormProps) {
               type="button"
               variant="outline"
               onClick={() => router.push("/dashboard/contacts")}
-              className="bg-card/80 text-foreground border-border/30 hover:bg-card"
+              className="text-foreground"
             >
               Отмена
             </Button>

@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Tables } from "@/types/supabase";
-import { formatMonthDay } from "@/utils/utils";
+import type { Tables } from "@/types/supabase";
 import { formatFullName } from "@/utils/name-formatter";
+import { formatMonthDay } from "@/utils/utils";
 
 interface RecentContactsProps {
   contacts: Tables<"contacts">[];

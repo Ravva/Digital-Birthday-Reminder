@@ -24,8 +24,8 @@ export const formatFullName = (fullName: string): string => {
   if (parts.length === 2) {
     // Старый формат: Имя Фамилия -> меняем на Фамилия Имя
     return `${parts[1]} ${parts[0]}`;
-  } else {
-    // Новый формат: Фамилия Имя Отчество -> оставляем как есть
-    return fullName;
   }
+
+  // Новый формат: Фамилия Имя Отчество -> оставляем как есть
+  return fullName;
 };

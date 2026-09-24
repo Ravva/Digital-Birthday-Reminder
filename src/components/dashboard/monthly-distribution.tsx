@@ -1,18 +1,18 @@
 "use client";
 
+import type { Tables } from "@/types/supabase";
+import { useEffect, useState } from "react";
 import {
-  BarChart,
   Bar,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
+  BarChart,
   CartesianGrid,
   Cell,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
-import { Tables } from "@/types/supabase";
-import { useEffect, useState } from "react";
 
 // Цвета для графика
 const COLORS = [
@@ -67,11 +67,11 @@ export function MonthlyDistribution({
     const monthCounts = Array(12).fill(0);
 
     // Подсчитываем количество дней рождения в каждом месяце
-    contacts.forEach((contact) => {
+    for (const contact of contacts) {
       const birthDate = new Date(contact.birth_date);
       const month = birthDate.getMonth();
       monthCounts[month]++;
-    });
+    }
 
     // Формируем данные для графика
     const data = monthNames.map((name, index) => ({
@@ -88,7 +88,7 @@ export function MonthlyDistribution({
         <h3 className="text-sm font-medium text-muted-foreground">
           Детальное распределение по месяцам
         </h3>
-        <div className="text-xs text-muted-foreground bg-card/80 px-2 py-1 rounded-md border border-border/30">
+        <div className="px-2 py-1 text-xs text-muted-foreground">
           Всего: {contacts.length} контактов
         </div>
       </div>
@@ -106,7 +106,7 @@ export function MonthlyDistribution({
           />
           <XAxis
             dataKey="name"
-            stroke="var(--chart-axis-color, #888888)"
+            stroke="var(--muted-foreground)"
             fontSize={12}
             tickLine={false}
             axisLine={false}
@@ -116,7 +116,7 @@ export function MonthlyDistribution({
             interval={0}
           />
           <YAxis
-            stroke="var(--chart-axis-color, #888888)"
+            stroke="var(--muted-foreground)"
             fontSize={12}
             tickLine={false}
             axisLine={false}
@@ -126,9 +126,9 @@ export function MonthlyDistribution({
             formatter={(value) => [`${value} контактов`, "Количество"]}
             labelFormatter={(label) => `Месяц: ${label}`}
             contentStyle={{
-              backgroundColor: "var(--tooltip-bg, rgba(30, 41, 59, 0.9))",
-              color: "var(--tooltip-color, #fff)",
-              border: "1px solid var(--tooltip-border, rgba(71, 85, 105, 0.5))",
+              backgroundColor: "var(--popover)",
+              color: "var(--popover-foreground)",
+              border: "1px solid var(--border)",
               borderRadius: "8px",
               padding: "8px 12px",
               boxShadow:
@@ -153,7 +153,7 @@ export function MonthlyDistribution({
           >
             {chartData.map((entry, index) => (
               <Cell
-                key={`cell-${index}`}
+                key={entry.name}
                 fill={COLORS[index % COLORS.length]}
               />
             ))}

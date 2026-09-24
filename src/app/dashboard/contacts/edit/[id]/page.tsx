@@ -1,18 +1,13 @@
+import ContactForm from "@/components/contacts/contact-form";
 import { redirect } from "next/navigation";
 import { createClient } from "../../../../../../supabase/server";
-import DashboardNavbar from "@/components/dashboard-navbar";
-import ContactForm from "@/components/contacts/contact-form";
-import { Tables } from "@/types/supabase";
-import { AuthCheck } from "@/components/auth/auth-check";
 
 export default async function EditContactPage({
   params,
-  searchParams,
 }: {
-  params: Promise<{ id: string }> | { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ id: string }>;
 }) {
-  const id = "then" in params ? (await params).id : params.id;
+  const { id } = await params;
   const supabase = await createClient();
 
   const {

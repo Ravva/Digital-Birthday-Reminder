@@ -1,9 +1,13 @@
 "use client";
 
-// import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -14,25 +18,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Tables } from "@/types/supabase";
-import { createClient } from "../../../supabase/client";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Switch } from "@/components/ui/switch";
-import { InfoIcon } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import type { Tables } from "@/types/supabase";
+import { InfoIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+// import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { createClient } from "../../../supabase/client";
 
 const formSchema = z.object({
   chat_id: z.string().min(1, {
@@ -111,7 +111,7 @@ export default function TelegramSettingsForm({
       const updateData: UpdateData = {
         chat_id: values.chat_id,
         bot_token: values.bot_token || null,
-        notification_time: values.notification_time + ":00", // Add seconds
+        notification_time: `${values.notification_time}:00`, // Add seconds
         days_before: values.days_before,
         message_template: values.message_template,
         is_active: values.is_active,
@@ -260,19 +260,19 @@ export default function TelegramSettingsForm({
     <div className="max-w-2xl mx-auto bg-card p-6 rounded-lg border shadow-sm">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="bg-[#0A84FF]/10 p-4 rounded-lg border border-[#0A84FF]/20 mb-6">
-            <h3 className="font-medium text-[#0A84FF] mb-2 flex items-center gap-2 text-sm">
+          <div className="mb-6 rounded-lg border border-primary/20 bg-primary/10 p-4">
+            <h3 className="mb-2 flex items-center gap-2 text-sm font-medium text-primary">
               <InfoIcon className="h-4 w-4" />
               Как настроить интеграцию с Telegram:
             </h3>
-            <ol className="list-decimal pl-5 text-[#0A84FF]/90 space-y-1 ml-2 text-sm">
+            <ol className="ml-2 list-decimal space-y-1 pl-5 text-sm text-primary/90">
               <li>
                 Начните чат с{" "}
                 <a
                   href="https://t.me/BotFather"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline text-[#0A84FF] hover:text-[#0A84FF]/80 text-sm"
+                  className="text-sm text-primary underline hover:text-primary/80"
                 >
                   @BotFather
                 </a>{" "}
@@ -293,7 +293,7 @@ export default function TelegramSettingsForm({
                   href="https://t.me/userinfobot"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline text-[#0A84FF] hover:text-[#0A84FF]/80 text-sm"
+                  className="text-sm text-primary underline hover:text-primary/80"
                 >
                   @userinfobot
                 </a>{" "}
@@ -357,7 +357,7 @@ export default function TelegramSettingsForm({
             </Button>
             {testStatus && (
               <div
-                className={`text-sm ${testStatus.success ? "text-green-600" : testStatus.success === false ? "text-red-600" : "text-blue-600"}`}
+                className={`text-sm ${testStatus.success ? "text-primary" : testStatus.success === false ? "text-destructive" : "text-muted-foreground"}`}
               >
                 {testStatus.message}
               </div>
@@ -524,8 +524,7 @@ export default function TelegramSettingsForm({
             <Button
               type="submit"
               disabled={isSubmitting}
-              variant="apple"
-              className="dark:bg-[#0A84FF] dark:text-white dark:hover:bg-[#0A84FF]/90"
+              variant="default"
             >
               {isSubmitting ? "Сохранение..." : "Сохранить настройки"}
             </Button>
@@ -533,7 +532,6 @@ export default function TelegramSettingsForm({
               type="button"
               variant="outline"
               onClick={() => router.push("/dashboard")}
-              className="dark:bg-[#2c2c2e] dark:text-white dark:border-[#38383a] dark:hover:bg-[#3a3a3c]"
             >
               Отмена
             </Button>
@@ -549,13 +547,12 @@ export default function TelegramSettingsForm({
               Так будет выглядеть ваше сообщение в Telegram:
             </DialogDescription>
           </DialogHeader>
-          <div className="bg-gray-100 p-4 rounded-md mt-2 mb-4">
+          <div className="mb-4 mt-2 rounded-md border bg-muted p-4">
             <p className="whitespace-pre-wrap">{previewMessage}</p>
           </div>
           <div className="flex justify-end">
             <Button
-              variant="apple"
-              className="dark:bg-[#0A84FF] dark:text-white dark:hover:bg-[#0A84FF]/90"
+              variant="default"
               onClick={async () => {
                 const values = form.getValues();
                 if (!values.bot_token || !values.chat_id) {

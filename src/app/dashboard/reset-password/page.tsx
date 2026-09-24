@@ -1,10 +1,10 @@
 import { resetPasswordAction } from "@/app/actions";
-import { FormMessage, Message } from "@/components/form-message";
+import { AuthCheck } from "@/components/auth/auth-check";
+import { FormMessage, type Message } from "@/components/form-message";
 import Navbar from "@/components/navbar";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AuthCheck } from "@/components/auth/auth-check";
 
 export default async function ResetPassword(props: {
   searchParams: Promise<Message>;

@@ -1,18 +1,11 @@
 "use client";
 
-import { Tables } from "@/types/supabase";
-import { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import type { Tables } from "@/types/supabase";
 import { formatFullName } from "@/utils/name-formatter";
+import { useEffect, useState } from "react";
 
 interface UpcomingBirthdaysProps {
   contacts?: Tables<"contacts">[];
@@ -86,14 +79,15 @@ export function UpcomingBirthdays({
 
     if (lastDigit === 1 && lastTwoDigits !== 11) {
       return `Через ${days} день`;
-    } else if (
+    }
+    if (
       [2, 3, 4].includes(lastDigit) &&
       ![12, 13, 14].includes(lastTwoDigits)
     ) {
       return `Через ${days} дня`;
-    } else {
-      return `Через ${days} дней`;
     }
+
+    return `Через ${days} дней`;
   };
 
   // Функция для получения цвета бейджа в зависимости от дней
@@ -112,7 +106,7 @@ export function UpcomingBirthdays({
         <div className="space-y-6">
           {upcomingBirthdays.map((contact) => (
             <div key={contact.id} className="flex items-center">
-              <Avatar className="h-9 w-9 border border-border/50">
+              <Avatar className="h-9 w-9">
                 <AvatarFallback className="bg-primary/10 text-primary">
                   {contact.name
                     .split(" ")

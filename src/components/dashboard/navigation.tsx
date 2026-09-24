@@ -1,12 +1,12 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Inbox, LogOut, MessageCircle, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Inbox, Users, MessageCircle, LogOut } from "lucide-react";
-import { createClient } from "../../../supabase/client";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { createClient } from "../../../supabase/client";
 
 export default function DashboardNavigation() {
   const pathname = usePathname();
@@ -48,8 +48,7 @@ export default function DashboardNavigation() {
             size="sm"
             className={cn(
               "gap-2 text-muted-foreground hover:text-foreground transition-colors",
-              link.active &&
-              "bg-accent text-foreground shadow-sm",
+              link.active && "bg-accent text-foreground shadow-sm",
             )}
           >
             <link.icon className="h-4 w-4" />

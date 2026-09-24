@@ -1,12 +1,12 @@
 "use client";
 
-import { Tables } from "@/types/supabase";
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Cake } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Tables } from "@/types/supabase";
 import { formatFullName } from "@/utils/name-formatter";
+import { Cake } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface NextBirthdayProps {
   contacts?: Tables<"contacts">[];
@@ -82,14 +82,15 @@ export function NextBirthday({
 
     if (lastDigit === 1 && lastTwoDigits !== 11) {
       return `Через ${days} день`;
-    } else if (
+    }
+    if (
       [2, 3, 4].includes(lastDigit) &&
       ![12, 13, 14].includes(lastTwoDigits)
     ) {
       return `Через ${days} дня`;
-    } else {
-      return `Через ${days} дней`;
     }
+
+    return `Через ${days} дней`;
   };
 
   // Функция для получения цвета бейджа в зависимости от дней
@@ -115,7 +116,7 @@ export function NextBirthday({
 
     return (
       <div className="flex items-center space-x-2">
-        <Avatar className="h-6 w-6 border border-border/50">
+        <Avatar className="h-6 w-6">
           <AvatarFallback className="bg-primary/10 text-primary text-xs">
             {formatFullName(nextBirthday.name)
               .split(" ")
@@ -153,7 +154,7 @@ export function NextBirthday({
   // Полный вариант для отдельной карточки
   if (!nextBirthday) {
     return (
-      <Card className="bg-card/80 backdrop-blur-sm border-border/80">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
             Следующий день рождения
@@ -171,7 +172,7 @@ export function NextBirthday({
   }
 
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-border/80">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">
           Следующий день рождения
@@ -180,7 +181,7 @@ export function NextBirthday({
       </CardHeader>
       <CardContent>
         <div className="flex items-center space-x-3">
-          <Avatar className="h-10 w-10 border border-border/50">
+        <Avatar className="h-10 w-10">
             <AvatarFallback className="bg-primary/10 text-primary">
               {formatFullName(nextBirthday.name)
                 .split(" ")

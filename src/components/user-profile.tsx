@@ -1,5 +1,7 @@
 "use client";
 import { UserCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { createClient } from "../../supabase/client";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -7,8 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { createClient } from "../../supabase/client";
-import { useRouter } from "next/navigation";
 
 export default function UserProfile() {
   const supabase = createClient();

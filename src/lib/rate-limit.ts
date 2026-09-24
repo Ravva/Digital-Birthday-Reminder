@@ -1,6 +1,6 @@
+import { hasUpstashRateLimitEnv } from "@/lib/env";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { hasUpstashRateLimitEnv } from "@/lib/env";
 
 let ratelimit: Ratelimit | null = null;
 

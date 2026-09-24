@@ -1,11 +1,11 @@
-import { FormMessage, Message } from "@/components/form-message";
+import { forgotPasswordAction } from "@/app/actions";
+import { FormMessage, type Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { SmtpMessage } from "../smtp-message";
-import { forgotPasswordAction } from "@/app/actions";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function ForgotPassword(props: {
   searchParams: Promise<Message>;
@@ -21,19 +21,19 @@ export default async function ForgotPassword(props: {
   }
 
   return (
-    <section className="auth-bg flex px-4 py-16 md:py-32">
+    <section className="flex min-h-svh bg-muted/40 px-4 py-16 md:py-32">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
-      <div className="glass-card m-auto w-full max-w-md rounded-xl p-6 animate-scale-in">
+      <div className="m-auto w-full max-w-md rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
         <form className="flex flex-col space-y-6">
           <div className="space-y-2 text-center">
             <div className="flex items-center justify-center mb-4">
-              <div className="flex items-center justify-center h-12 w-12 rounded-xl gradient-bg">
+              <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-primary text-primary-foreground">
                 <img
                   src="/cake.svg"
                   alt="Logo"
-                  className="h-7 brightness-0 invert"
+                  className="h-7 invert dark:invert-0"
                 />
               </div>
             </div>
@@ -43,7 +43,7 @@ export default async function ForgotPassword(props: {
             <p className="text-sm text-muted-foreground">
               Уже есть аккаунт?{" "}
               <Link
-                className="gradient-text font-medium hover:underline transition-all"
+                className="text-primary font-medium hover:underline transition-all"
                 href="/sign-in"
               >
                 Войти
@@ -70,7 +70,7 @@ export default async function ForgotPassword(props: {
           <SubmitButton
             formAction={forgotPasswordAction}
             pendingText="Отправка ссылки..."
-            className="w-full gradient-bg text-white hover:opacity-90 transition-opacity border-0"
+            className="w-full"
           >
             Сбросить пароль
           </SubmitButton>

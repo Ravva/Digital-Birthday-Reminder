@@ -1,8 +1,6 @@
+import ContactForm from "@/components/contacts/contact-form";
 import { redirect } from "next/navigation";
 import { createClient } from "../../../../../supabase/server";
-import DashboardNavbar from "@/components/dashboard-navbar";
-import ContactForm from "@/components/contacts/contact-form";
-import { AuthCheck } from "@/components/auth/auth-check";
 
 export default async function NewContactPage() {
   const supabase = await createClient();

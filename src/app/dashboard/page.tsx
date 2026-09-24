@@ -1,4 +1,3 @@
-import { Metadata } from "next";
 import {
   Card,
   CardContent,
@@ -6,12 +5,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { Metadata } from "next";
+import { createClient } from "../../../supabase/server";
+import { NextBirthday } from "../../components/dashboard/next-birthday";
 import { Overview } from "../../components/dashboard/overview";
 import { UpcomingBirthdays } from "../../components/dashboard/upcoming-birthdays";
-import { NextBirthday } from "../../components/dashboard/next-birthday";
-import { createClient } from "../../../supabase/server";
 
-import { Cake, Gift, Users, Bell } from "lucide-react";
+import { Bell, Cake, Gift, Users } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -21,53 +21,42 @@ export const metadata: Metadata = {
 export default async function DashboardPage() {
   const supabase = await createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   // Fetch contacts
   const { data: contacts } = await supabase
     .from("contacts")
     .select("*")
     .order("name");
 
-  // Fetch telegram settings
-  const { data: telegramSettings } = await supabase
-    .from("telegram_settings")
-    .select("*")
-    .eq("user_id", user?.id || "")
-    .maybeSingle();
-
   // Calculate statistics
   const totalContacts = contacts?.length || 0;
 
   const recentContacts = contacts
     ? contacts.filter((contact) => {
-      const createdDate = new Date(
-        contact.created_at || contact.updated_at || new Date(),
-      );
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      return createdDate >= thirtyDaysAgo;
-    }).length
+        const createdDate = new Date(
+          contact.created_at || contact.updated_at || new Date(),
+        );
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        return createdDate >= thirtyDaysAgo;
+      }).length
     : 0;
 
   const upcomingBirthdays = contacts
     ? contacts.filter((contact) => {
-      const birthDate = new Date(contact.birth_date);
-      const today = new Date();
-      const nextBirthday = new Date(
-        today.getFullYear(),
-        birthDate.getMonth(),
-        birthDate.getDate(),
-      );
-      if (nextBirthday < today) {
-        nextBirthday.setFullYear(today.getFullYear() + 1);
-      }
-      const diffTime = nextBirthday.getTime() - today.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      return diffDays <= 30;
-    }).length
+        const birthDate = new Date(contact.birth_date);
+        const today = new Date();
+        const nextBirthday = new Date(
+          today.getFullYear(),
+          birthDate.getMonth(),
+          birthDate.getDate(),
+        );
+        if (nextBirthday < today) {
+          nextBirthday.setFullYear(today.getFullYear() + 1);
+        }
+        const diffTime = nextBirthday.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 30;
+      }).length
     : 0;
 
   return (
@@ -86,12 +75,12 @@ export default async function DashboardPage() {
 
         {/* Stat Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="glass-card animate-slide-up stagger-1">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Всего контактов
               </CardTitle>
-              <div className="stat-icon">
+              <div className="flex items-center justify-center rounded-lg p-2 bg-muted">
                 <Users />
               </div>
             </CardHeader>
@@ -103,12 +92,12 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass-card animate-slide-up stagger-2">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Дней рождения в этом месяце
               </CardTitle>
-              <div className="stat-icon">
+              <div className="flex items-center justify-center rounded-lg p-2 bg-muted">
                 <Gift />
               </div>
             </CardHeader>
@@ -120,12 +109,12 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass-card animate-slide-up stagger-3">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Статус уведомлений
               </CardTitle>
-              <div className="stat-icon">
+              <div className="flex items-center justify-center rounded-lg p-2 bg-muted">
                 <Bell />
               </div>
             </CardHeader>
@@ -137,12 +126,12 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass-card animate-slide-up stagger-4">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Следующий день рождения
               </CardTitle>
-              <div className="stat-icon">
+              <div className="flex items-center justify-center rounded-lg p-2 bg-muted">
                 <Cake />
               </div>
             </CardHeader>
@@ -154,18 +143,16 @@ export default async function DashboardPage() {
 
         {/* Charts */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-4 glass-card animate-fade-in">
+          <Card className="col-span-4">
             <CardHeader>
               <CardTitle>Статистика дней рождения</CardTitle>
-              <CardDescription>
-                Распределение по месяцам
-              </CardDescription>
+              <CardDescription>Распределение по месяцам</CardDescription>
             </CardHeader>
             <CardContent className="pl-2">
               <Overview contacts={contacts || []} />
             </CardContent>
           </Card>
-          <Card className="col-span-3 glass-card animate-fade-in">
+          <Card className="col-span-3">
             <CardHeader>
               <CardTitle>Ближайшие дни рождения</CardTitle>
               <CardDescription>5 ближайших дней рождения</CardDescription>

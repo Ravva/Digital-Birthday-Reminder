@@ -1,9 +1,7 @@
+import TelegramSettingsForm from "@/components/telegram/telegram-settings-form";
+import type { Tables } from "@/types/supabase";
 import { redirect } from "next/navigation";
 import { createClient } from "../../../../supabase/server";
-import DashboardNavbar from "@/components/dashboard-navbar";
-import TelegramSettingsForm from "@/components/telegram/telegram-settings-form";
-import { Tables } from "@/types/supabase";
-import { AuthCheck } from "@/components/auth/auth-check";
 
 export default async function TelegramSettingsPage() {
   const supabase = await createClient();

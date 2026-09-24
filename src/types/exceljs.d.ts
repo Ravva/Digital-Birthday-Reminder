@@ -20,7 +20,7 @@ declare module "exceljs" {
     columns: Column[];
     getRow(index: number): Row;
     getColumn(index: number): Column;
-    addRow(data: any[]): Row;
+    addRow(data: unknown[]): Row;
     eachRow(callback: (row: Row, rowNumber: number) => void): void;
   }
 
@@ -31,12 +31,12 @@ declare module "exceljs" {
   }
 
   export interface Row {
-    values: any[];
+    values: unknown[];
     getCell(index: number): Cell;
   }
 
   export interface Cell {
-    value: any;
+    value: unknown;
     type: string;
   }
 

@@ -1,9 +1,9 @@
+import { getSupabaseServiceRoleKey } from "@/lib/env";
+import { SupabaseAdapter } from "@auth/supabase-adapter";
 import NextAuth from "next-auth";
+import type { Adapter } from "next-auth/adapters";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { SupabaseAdapter } from "@auth/supabase-adapter";
-import { getSupabaseServiceRoleKey } from "@/lib/env";
-import type { Adapter } from "next-auth/adapters";
 
 const serviceRoleKey = getSupabaseServiceRoleKey();
 
@@ -34,7 +34,7 @@ const handler = NextAuth({
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(_credentials) {
         // Return null to trigger the sign-in page
         return null;
       },
@@ -48,13 +48,13 @@ const handler = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    async session({ session, token, user }) {
+    async session({ session, token }) {
       if (session?.user) {
         session.user.id = token.sub!;
       }
       return session;
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
         token.sub = user.id;
       }

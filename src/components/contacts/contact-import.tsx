@@ -1,15 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { createClient } from "../../../supabase/client";
-import { useRouter } from "next/navigation";
-import { Upload, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { Workbook } from "exceljs";
+import { AlertCircle, CheckCircle2, Upload } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { createClient } from "../../../supabase/client";
 
 interface ContactImportProps {
   userId: string;
+}
+
+interface ImportedContact {
+  name: string;
+  birth_date: string;
 }
 
 export default function ContactImport({ userId }: ContactImportProps) {
@@ -25,19 +30,19 @@ export default function ContactImport({ userId }: ContactImportProps) {
   const supabase = createClient();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
       setResult(null);
     }
   };
 
-  const parseExcel = async (file: File): Promise<any[]> => {
-    return new Promise<any[]>(async (resolve, reject) => {
-      try {
-        const result: { name: string; birth_date: string }[] = [];
-        const workbook = new Workbook();
+  const parseExcel = async (file: File): Promise<ImportedContact[]> => {
+    const result: ImportedContact[] = [];
+    const workbook = new Workbook();
 
-        if (file.name.endsWith(".xlsx") || file.name.endsWith(".xls")) {
+    try {
+      if (file.name.endsWith(".xlsx") || file.name.endsWith(".xls")) {
           // Handle Excel file
           const buffer = await file.arrayBuffer();
           await workbook.xlsx.load(buffer);
@@ -68,7 +73,7 @@ export default function ContactImport({ userId }: ContactImportProps) {
           worksheet.eachRow((row, rowNumber) => {
             if (rowNumber < startRow) return;
 
-            const values = row.values as any[];
+            const values = row.values as unknown[];
             if (!values || values.length < 3) return;
 
             // Handle the new name format: Lastname Firstname Patronymic
@@ -97,7 +102,11 @@ export default function ContactImport({ userId }: ContactImportProps) {
               birthDateValue.includes(".")
             ) {
               const [day, month, year] = birthDateValue.split(".").map(Number);
-              if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+              if (
+                !Number.isNaN(day) &&
+                !Number.isNaN(month) &&
+                !Number.isNaN(year)
+              ) {
                 birthDate = new Date(year, month - 1, day, 12);
               }
             }
@@ -106,7 +115,7 @@ export default function ContactImport({ userId }: ContactImportProps) {
               surname &&
               firstName &&
               birthDate &&
-              !isNaN(birthDate.getTime())
+              !Number.isNaN(birthDate.getTime())
             ) {
               // Store in format: Lastname Firstname Patronymic (as expected by the display functions)
               result.push({
@@ -155,7 +164,11 @@ export default function ContactImport({ userId }: ContactImportProps) {
             let birthDate: Date | null = null;
             if (birthDateStr.includes(".")) {
               const [day, month, year] = birthDateStr.split(".").map(Number);
-              if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+              if (
+                !Number.isNaN(day) &&
+                !Number.isNaN(month) &&
+                !Number.isNaN(year)
+              ) {
                 birthDate = new Date(year, month - 1, day, 12);
               }
             }
@@ -164,7 +177,7 @@ export default function ContactImport({ userId }: ContactImportProps) {
               surname &&
               firstName &&
               birthDate &&
-              !isNaN(birthDate.getTime())
+              !Number.isNaN(birthDate.getTime())
             ) {
               // Store in format: Lastname Firstname Patronymic (as expected by the display functions)
               result.push({
@@ -174,13 +187,11 @@ export default function ContactImport({ userId }: ContactImportProps) {
             }
           }
         }
-
-        resolve(result);
-      } catch (error) {
-        console.error("Error parsing file:", error);
-        reject(error);
-      }
-    });
+      return result;
+    } catch (error) {
+      console.error("Error parsing file:", error);
+      throw error;
+    }
   };
 
   const handleImport = async () => {
@@ -247,7 +258,7 @@ export default function ContactImport({ userId }: ContactImportProps) {
   };
 
   return (
-    <div className="p-6 border border-border/30 rounded-xl bg-card/80 backdrop-blur-sm shadow-sm">
+    <div className="rounded-xl border bg-card p-6 shadow-sm">
       <h2 className="text-xl font-semibold mb-4">Импорт контактов</h2>
 
       <div className="mb-6">
@@ -258,7 +269,7 @@ export default function ContactImport({ userId }: ContactImportProps) {
         </p>
         <p className="text-sm text-muted-foreground mb-4">
           Пример:{" "}
-          <code className="bg-card px-1.5 py-0.5 rounded border border-border/30">
+          <code className="rounded border bg-card px-1.5 py-0.5">
             Иванов Иван Иванович,01.05.1990
           </code>
         </p>
@@ -299,8 +310,8 @@ export default function ContactImport({ userId }: ContactImportProps) {
           variant={result.success ? "default" : "destructive"}
           className={
             result.success
-              ? "bg-[#30D158]/10 border-[#30D158]/30 text-[#30D158]"
-              : "bg-[#FF453A]/10 border-[#FF453A]/30 text-[#FF453A]"
+              ? "border-primary/30 bg-primary/10 text-primary"
+              : "border-destructive/30 bg-destructive/10 text-destructive"
           }
         >
           <div className="flex items-center gap-2">
@@ -313,7 +324,7 @@ export default function ContactImport({ userId }: ContactImportProps) {
           </div>
           <AlertDescription
             className={
-              result.success ? "text-[#30D158]/90" : "text-[#FF453A]/90"
+              result.success ? "text-primary/90" : "text-destructive/90"
             }
           >
             {result.message}

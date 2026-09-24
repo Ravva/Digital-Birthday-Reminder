@@ -1,19 +1,12 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Inbox, LogOut, Search, User, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Search,
-  Inbox,
-  User,
-  Users,
-  LogOut,
-  Settings,
-  Calendar,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import { createClient } from "../../../supabase/client";
 import { useRouter } from "next/navigation";
+import { createClient } from "../../../supabase/client";
 
 export default function SidebarClient() {
   const pathname = usePathname();
@@ -26,7 +19,7 @@ export default function SidebarClient() {
   };
 
   return (
-    <div className="w-64 h-screen bg-[#1e1f21] text-white flex flex-col">
+    <div className="flex h-screen w-64 flex-col border-r bg-background text-foreground">
       {/* Logo */}
       <div className="p-4 flex items-center">
         <img src="/logo.svg" alt="Логотип" className="h-8 mr-2" />
@@ -34,12 +27,12 @@ export default function SidebarClient() {
 
       {/* Search */}
       <div className="px-4 mb-4">
-        <div className="flex items-center bg-[#2c2d30] rounded-md px-3 py-1.5">
-          <Search className="h-4 w-4 text-gray-400 mr-2" />
+        <div className="flex items-center rounded-md border bg-background px-3 py-1.5">
+          <Search className="mr-2 h-4 w-4 text-muted-foreground" />
           <input
             type="text"
             placeholder="Поиск"
-            className="bg-transparent border-none text-sm text-gray-200 focus:outline-none w-full"
+            className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
           />
         </div>
       </div>
@@ -51,10 +44,10 @@ export default function SidebarClient() {
             <Link
               href="/dashboard"
               className={cn(
-                "flex items-center px-2 py-1.5 text-sm rounded-md",
+                "flex items-center rounded-md px-2 py-1.5 text-sm",
                 pathname === "/dashboard"
-                  ? "bg-[#525567] text-white"
-                  : "text-gray-300 hover:bg-[#2c2d30]",
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
               )}
             >
               <Inbox className="h-4 w-4 mr-3" />
@@ -65,10 +58,10 @@ export default function SidebarClient() {
             <Link
               href="/dashboard/contacts"
               className={cn(
-                "flex items-center px-2 py-1.5 text-sm rounded-md",
+                "flex items-center rounded-md px-2 py-1.5 text-sm",
                 pathname.includes("/dashboard/contacts")
-                  ? "bg-[#525567] text-white"
-                  : "text-gray-300 hover:bg-[#2c2d30]",
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
               )}
             >
               <User className="h-4 w-4 mr-3" />
@@ -79,10 +72,10 @@ export default function SidebarClient() {
             <Link
               href="/dashboard/telegram"
               className={cn(
-                "flex items-center px-2 py-1.5 text-sm rounded-md",
+                "flex items-center rounded-md px-2 py-1.5 text-sm",
                 pathname.includes("/dashboard/telegram")
-                  ? "bg-[#525567] text-white"
-                  : "text-gray-300 hover:bg-[#2c2d30]",
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
               )}
             >
               <Users className="h-4 w-4 mr-3" />
@@ -93,14 +86,16 @@ export default function SidebarClient() {
       </nav>
 
       {/* Bottom Actions */}
-      <div className="p-4 border-t border-gray-700">
-        <button
+      <div className="border-t p-4">
+        <Button
+          type="button"
+          variant="outline"
           onClick={handleSignOut}
-          className="flex items-center justify-center w-full px-3 py-1.5 text-sm bg-[#2c2d30] rounded-md hover:bg-[#3c3d40] text-white"
+          className="w-full"
         >
-          <LogOut className="h-4 w-4 mr-2" />
+          <LogOut className="mr-2 h-4 w-4" />
           <span>Выйти</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

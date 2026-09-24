@@ -1,5 +1,5 @@
 declare module "@supabase/ssr" {
-  import { SupabaseClient, createClient } from "@supabase/supabase-js";
+  import type { SupabaseClient } from "@supabase/supabase-js";
 
   export interface CookieOptions {
     name?: string;

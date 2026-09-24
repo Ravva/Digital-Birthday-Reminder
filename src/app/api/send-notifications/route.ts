@@ -1,27 +1,16 @@
-import { createClient } from "@supabase/supabase-js";
 import { getSupabaseServiceRoleKey } from "@/lib/env";
 import { getRateLimit } from "@/lib/rate-limit";
+import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 // Add this line to explicitly set the allowed methods
 export const dynamic = "force-dynamic";
-
-interface ApiError {
-  message: string;
-}
 
 interface Contact {
   id: string;
   name: string;
   birth_date: string;
   notes: string | null;
-}
-
-interface TelegramSettings {
-  chat_id: string;
-  bot_token: string | null;
-  message_template: string;
-  days_before: number;
 }
 
 async function sendTelegramMessage(
@@ -96,8 +85,10 @@ export async function POST(req: Request) {
     const rateLimit = getRateLimit();
     if (rateLimit) {
       const forwardedFor = req.headers.get("x-forwarded-for");
-      const identifier = forwardedFor?.split(",")[0]?.trim() || "send-notifications";
-      const { success, limit, remaining, reset } = await rateLimit.limit(identifier);
+      const identifier =
+        forwardedFor?.split(",")[0]?.trim() || "send-notifications";
+      const { success, limit, remaining, reset } =
+        await rateLimit.limit(identifier);
 
       if (!success) {
         return NextResponse.json(
@@ -253,7 +244,7 @@ export async function POST(req: Request) {
 }
 
 // Optionally, add an OPTIONS handler to properly handle CORS
-export async function OPTIONS(req: Request) {
+export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
     headers: {

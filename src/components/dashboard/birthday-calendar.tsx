@@ -1,10 +1,7 @@
 "use client";
 
-import { Tables } from "@/types/supabase";
-import { Calendar } from "@/components/ui/calendar";
-import { useEffect, useState } from "react";
-import { ru } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Card,
   CardContent,
@@ -13,10 +10,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import type { Tables } from "@/types/supabase";
+import { ru } from "date-fns/locale";
+import { useEffect, useState } from "react";
 
 interface BirthdayCalendarProps {
   contacts?: Tables<"contacts">[];
 }
+
+const formatDateKey = (date: Date): string =>
+  `${date.getMonth() + 1}-${date.getDate()}`;
 
 export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -27,11 +30,6 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
     Tables<"contacts">[]
   >([]);
 
-  // Функция для форматирования даты в строку "YYYY-MM-DD"
-  const formatDateKey = (date: Date): string => {
-    return `${date.getMonth() + 1}-${date.getDate()}`;
-  };
-
   useEffect(() => {
     if (contacts.length === 0) {
       setBirthdays({});
@@ -41,7 +39,7 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
     // Группируем контакты по дате рождения (месяц-день)
     const birthdayMap: Record<string, Tables<"contacts">[]> = {};
 
-    contacts.forEach((contact) => {
+    for (const contact of contacts) {
       const birthDate = new Date(contact.birth_date);
       const key = formatDateKey(birthDate);
 
@@ -50,7 +48,7 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
       }
 
       birthdayMap[key].push(contact);
-    });
+    }
 
     setBirthdays(birthdayMap);
 
@@ -65,11 +63,6 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
   const hasBirthday = (day: Date): boolean => {
     const key = formatDateKey(day);
     return !!birthdays[key] && birthdays[key].length > 0;
-  };
-
-  // Функция для отображения дней с днями рождения
-  const dayClassName = (day: Date) => {
-    return hasBirthday(day) ? "bg-primary/10 rounded-md" : "";
   };
 
   // Обработчик выбора даты
@@ -104,7 +97,7 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <Card className="bg-card/80 backdrop-blur-sm border-border/80">
+      <Card>
         <CardHeader>
           <CardTitle>Календарь дней рождения</CardTitle>
           <CardDescription>
@@ -122,23 +115,14 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
               birthday: (date) => hasBirthday(date),
             }}
             modifiersClassNames={{
-              birthday: "bg-primary/10 font-bold",
-            }}
-            components={{
-              DayContent: (props) => (
-                <div className={dayClassName(props.date)}>
-                  {props.date.getDate()}
-                  {hasBirthday(props.date) && (
-                    <div className="w-1 h-1 bg-primary rounded-full mx-auto mt-1"></div>
-                  )}
-                </div>
-              ),
+              birthday:
+                "bg-primary/10 font-bold relative after:absolute after:bottom-0.5 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-primary",
             }}
           />
         </CardContent>
       </Card>
 
-      <Card className="bg-card/80 backdrop-blur-sm border-border/80">
+      <Card>
         <CardHeader>
           <CardTitle>
             {date ? (
@@ -173,10 +157,7 @@ export function BirthdayCalendar({ contacts = [] }: BirthdayCalendarProps) {
                       {calculateAge(contact.birth_date)} лет
                     </p>
                   </div>
-                  <Badge
-                    variant="outline"
-                    className="border-border/30 bg-card/80"
-                  >
+                  <Badge variant="outline">
                     {new Date(contact.birth_date).getFullYear()}
                   </Badge>
                 </div>

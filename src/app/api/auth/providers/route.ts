@@ -8,7 +8,7 @@ export async function GET() {
   try {
     const providers = await getProviders();
     return NextResponse.json(providers || {});
-  } catch (error) {
+  } catch {
     console.warn(
       "Warning: Providers fetch failed during build time - this is expected",
     );

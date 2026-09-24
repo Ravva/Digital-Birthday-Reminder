@@ -1,24 +1,5 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Tables } from "@/types/supabase";
-import { formatDate } from "@/utils/utils";
-import Link from "next/link";
-import { Edit, Trash2 } from "lucide-react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "../../../supabase/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,18 +11,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
-// Функция для разделения имени и фамилии (новый формат: Lastname Firstname Patronymic)
-const splitName = (fullName: string) => {
-  const parts = fullName.trim().split(" ");
-  if (parts.length >= 2) {
-    // В новом формате первая часть - это фамилия, остальные - имя и отчество
-    const lastName = parts[0];
-    const firstName = parts.slice(1).join(" ");
-    return { firstName, lastName };
-  }
-  return { firstName: fullName, lastName: "" };
-};
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import type { Tables } from "@/types/supabase";
+import type { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { createClient } from "../../../supabase/client";
 
 // Функция для отображения фамилии и имени (универсальная для разных форматов)
 const displayLastNameFirst = (fullName: string) => {
@@ -61,10 +40,10 @@ const displayLastNameFirst = (fullName: string) => {
   if (parts.length === 2) {
     // Старый формат: Имя Фамилия -> меняем на Фамилия Имя
     return `${parts[1]} ${parts[0]}`;
-  } else {
-    // Новый формат: Фамилия Имя Отчество -> оставляем как есть
-    return fullName;
   }
+
+  // Новый формат: Фамилия Имя Отчество -> оставляем как есть
+  return fullName;
 };
 
 // Calculate days until birthday
@@ -152,8 +131,8 @@ function DeleteContactButton({
         <AlertDialogHeader>
           <AlertDialogTitle>Удалить контакт?</AlertDialogTitle>
           <AlertDialogDescription>
-            Вы уверены, что хотите удалить контакт «{name}»? Это действие
-            нельзя отменить.
+            Вы уверены, что хотите удалить контакт «{name}»? Это действие нельзя
+            отменить.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -215,10 +194,10 @@ export const columns: ColumnDef<Tables<"contacts">>[] = [
         {displayLastNameFirst(row.getValue("name"))}
       </div>
     ),
-    sortingFn: (rowA, rowB, columnId) => {
+    sortingFn: (rowA, rowB) => {
       // Сортировка по фамилии
-      const nameA = rowA.getValue(columnId) as string;
-      const nameB = rowB.getValue(columnId) as string;
+      const nameA = rowA.getValue("name") as string;
+      const nameB = rowB.getValue("name") as string;
 
       // Определяем фамилию для обоих форматов
       const getLastName = (fullName: string) => {
@@ -229,9 +208,8 @@ export const columns: ColumnDef<Tables<"contacts">>[] = [
         // Если 3+ части: Фамилия Имя Отчество -> фамилия первая
         if (parts.length === 2) {
           return parts[1]; // вторая часть - фамилия
-        } else {
-          return parts[0]; // первая часть - фамилия
         }
+        return parts[0]; // первая часть - фамилия
       };
 
       const lastNameA = getLastName(nameA);
@@ -265,10 +243,10 @@ export const columns: ColumnDef<Tables<"contacts">>[] = [
         </div>
       );
     },
-    sortingFn: (rowA, rowB, columnId) => {
+    sortingFn: (rowA, rowB) => {
       // For birth_date, sort by full date including year
-      const dateA = new Date(rowA.getValue(columnId));
-      const dateB = new Date(rowB.getValue(columnId));
+      const dateA = new Date(rowA.getValue("birth_date"));
+      const dateB = new Date(rowB.getValue("birth_date"));
 
       return dateA.getTime() - dateB.getTime();
     },
@@ -290,7 +268,7 @@ export const columns: ColumnDef<Tables<"contacts">>[] = [
       const age = calculateAge(row.original.birth_date);
       return <div>{age} лет</div>;
     },
-    sortingFn: (rowA, rowB, columnId) => {
+    sortingFn: (rowA, rowB) => {
       const ageA = calculateAge(rowA.original.birth_date);
       const ageB = calculateAge(rowB.original.birth_date);
       return ageA - ageB;
@@ -312,14 +290,14 @@ export const columns: ColumnDef<Tables<"contacts">>[] = [
     cell: ({ row }) => {
       const daysUntil = calculateDaysUntilBirthday(row.original.birth_date);
       if (daysUntil === 0) {
-        return <span className="font-bold text-green-600">Сегодня!</span>;
-      } else if (daysUntil === 1) {
-        return <span className="font-medium text-orange-500">Завтра</span>;
-      } else {
-        return <span>{daysUntil}</span>;
+        return <span className="font-bold text-primary">Сегодня!</span>;
       }
+      if (daysUntil === 1) {
+        return <span className="font-medium text-primary">Завтра</span>;
+      }
+      return <span>{daysUntil}</span>;
     },
-    sortingFn: (rowA, rowB, columnId) => {
+    sortingFn: (rowA, rowB) => {
       const daysUntilA = calculateDaysUntilBirthday(rowA.original.birth_date);
       const daysUntilB = calculateDaysUntilBirthday(rowB.original.birth_date);
       return daysUntilA - daysUntilB;
